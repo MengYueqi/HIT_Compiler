@@ -1,6 +1,6 @@
 # 文法定义
 
-Tokens:
+### Tokens:
 
 ```
 INT → /* A sequence of digits without spaces */
@@ -9,16 +9,16 @@ ID → /* A character string consisting of 52 upper- or lower-case alphabetic, 1
 SEMI → ;
 COMMA → ,
 ASSIGNOP → =
-RELOP → >     | <     | >=     | <=     | ==     | !=
+RELOP → > | < | >= | <= | == | !=
 PLUS → +
 MINUS → -
 STAR → *
 DIV → /
 AND → &&
-OR →     |    |
+OR → ||
 DOT → .
 NOT → !
-TYPE → int     | float
+TYPE → int | float
 LP → (
 RP → )
 LB → [
@@ -32,7 +32,7 @@ ELSE → else
 WHILE → while
 ```
 
-High-level Definitions:
+### High-level Definitions:
 
 ```
 Program → ExtDefList
@@ -57,7 +57,7 @@ OptTag → ID
 Tag → ID
 ```
 
-Declarators:
+### Declarators:
 
 ```
 VarDec → ID
@@ -69,7 +69,7 @@ VarList → ParamDec COMMA VarList
 ParamDec → Specifier VarDec
 ```
 
-Statements:
+### Statements:
 
 ```
 CompSt → LC DefList StmtList RC
@@ -83,7 +83,7 @@ Stmt → Exp SEMI
     | WHILE LP Exp RP Stmt
 ```
 
-Local Definitions:
+### Local Definitions:
 
 ```
 DefList → Def DefList
@@ -95,7 +95,7 @@ Dec → VarDec
     | VarDec ASSIGNOP Exp
 ```
 
-Expressions:
+### Expressions:
 
 ```
 Exp → Exp ASSIGNOP Exp
