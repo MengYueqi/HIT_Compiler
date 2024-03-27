@@ -16,5 +16,6 @@ struct TreeNode
     
 };
 
+typedef struct TreeNode* Node;
 void yyerror(char *msg);
 extern int yylex(void);

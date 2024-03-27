@@ -1,21 +1,21 @@
 %{
-#include <stdio.h>
-#include <stdlib.h>
+# include <stdio.h>
+# include <stdlib.h>
 # include "parser.h"
 %}
 
 %union{
-    treeNode type_node;
+    Node node;
 }
 
 // 终结符集合
-%token <TreeNode> SEMI, COMMA, ASSIGNOP, RELOP, PLUS, MINUS, STAR, DIV, AND,
-%token <TreeNode> OR, DOT, NOT, TYPE, LP, RP, LB, RB, LC, RC, STRUCT, RETURN, IF, ELSE, WHILE
-
+%token <TreeNode> SEMI COMMA ASSIGNOP RELOP PLUS MINUS STAR DIV AND
+%token <TreeNode> OR DOT NOT TYPE LP RP LB RB LC RC STRUCT RETURN IF ELSE WHILE
+%token <TreeNode> TIMES LPAREN NUMBER RPAREN DIVIDE
 %%
 
 expr : expr PLUS expr
-     | expr MINUS expr
+     | expr SEMI expr
      | expr TIMES expr
      | expr DIVIDE expr
      | LPAREN expr RPAREN
@@ -38,7 +38,7 @@ int yylex() {
 }
 
 void yyerror(char *s) {
-    fprintf(stderr, "Error: %s\n", s);
+    fprintf(stderr "Error: %s\n" s);
 }
 
 int main() {

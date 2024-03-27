@@ -39,29 +39,80 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     NUMBER = 258,
-     PLUS = 259,
-     MINUS = 260,
-     TIMES = 261,
-     DIVIDE = 262,
-     LPAREN = 263,
-     RPAREN = 264
+     SEMI = 258,
+     COMMA = 259,
+     ASSIGNOP = 260,
+     RELOP = 261,
+     PLUS = 262,
+     MINUS = 263,
+     STAR = 264,
+     DIV = 265,
+     AND = 266,
+     OR = 267,
+     DOT = 268,
+     NOT = 269,
+     TYPE = 270,
+     LP = 271,
+     RP = 272,
+     LB = 273,
+     RB = 274,
+     LC = 275,
+     RC = 276,
+     STRUCT = 277,
+     RETURN = 278,
+     IF = 279,
+     ELSE = 280,
+     WHILE = 281,
+     TIMES = 282,
+     LPAREN = 283,
+     NUMBER = 284,
+     RPAREN = 285,
+     DIVIDE = 286
    };
 #endif
 /* Tokens.  */
-#define NUMBER 258
-#define PLUS 259
-#define MINUS 260
-#define TIMES 261
-#define DIVIDE 262
-#define LPAREN 263
-#define RPAREN 264
+#define SEMI 258
+#define COMMA 259
+#define ASSIGNOP 260
+#define RELOP 261
+#define PLUS 262
+#define MINUS 263
+#define STAR 264
+#define DIV 265
+#define AND 266
+#define OR 267
+#define DOT 268
+#define NOT 269
+#define TYPE 270
+#define LP 271
+#define RP 272
+#define LB 273
+#define RB 274
+#define LC 275
+#define RC 276
+#define STRUCT 277
+#define RETURN 278
+#define IF 279
+#define ELSE 280
+#define WHILE 281
+#define TIMES 282
+#define LPAREN 283
+#define NUMBER 284
+#define RPAREN 285
+#define DIVIDE 286
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+typedef union YYSTYPE
+#line 7 "syntax.y"
+{
+    Node node;
+}
+/* Line 1529 of yacc.c.  */
+#line 115 "syntax.tab.h"
+	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1

@@ -1,7 +1,7 @@
 %{
-#include <stdio.h>
-SEMI, COMMA, ASSIGNOP, RELOP, PLUS, MINUS, STAR, DIV, AND,
-OR, DOT, NOT, TYPE, LP, RP, LB, RB, LC, RC, STRUCT, RETURN, IF, ELSE, WHILE;
+# include <stdio.h>
+# include "parser.h"
+# include "syntax.tab.h"
 %}
 
 
