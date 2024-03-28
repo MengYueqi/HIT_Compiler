@@ -69,7 +69,8 @@
      LPAREN = 285,
      NUMBER = 286,
      RPAREN = 287,
-     DIVIDE = 288
+     DIVIDE = 288,
+     ID = 289
    };
 #endif
 /* Tokens.  */
@@ -104,6 +105,7 @@
 #define NUMBER 286
 #define RPAREN 287
 #define DIVIDE 288
+#define ID 289
 
 
 
@@ -115,7 +117,7 @@ typedef union YYSTYPE
     Node node;
 }
 /* Line 1529 of yacc.c.  */
-#line 119 "syntax.tab.h"
+#line 121 "syntax.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

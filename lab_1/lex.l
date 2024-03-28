@@ -35,7 +35,9 @@ digit [0-9]
 "if"   {printf("IF\n"); return IF;}
 "else"   {printf("ELSE\n"); return ELSE;}
 "while"   {printf("WHILE\n"); return WHILE;}
-.               { printf("Invalid character: %s\n", yytext); }
+"int"|"float" {printf("TYPE\n"); return TYPE;}
+[a-zA-Z_][a-zA-Z0-9_]* {printf("ID\n"); return ID;}
+.               {printf("Invalid character: %s\n", yytext); }
 
 %%
 
