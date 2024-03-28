@@ -39,7 +39,7 @@ digit [0-9]
 
 %%
 
-int main() {
-    while (yylex() != 0){}
-    return 0;
-}
+// int main() {
+//     while (yylex() != 0){}
+//     return 0;
+// }

@@ -15,14 +15,18 @@ CFLAGS = -Wall
 # Target executable
 TARGET = calc
 
-#
+# Bison source
 BISON_FLAGS = -d
+
 
 # Source files
 LEX_SOURCE = lex.l
 LEX_C = lex.yy.c
+Main = main.c
 BISON_SOURCE = syntax.y
 BISON_OUT = syntax.tab.c syntax.tab.h
+
+# 还没写进 Makefile 的编译命令：gcc main.c syntax.tab.c -ll -ly -o parser
 
 all: $(TARGET)
 

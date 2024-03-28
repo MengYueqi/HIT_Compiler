@@ -1922,8 +1922,8 @@ void yyfree (void * ptr )
 #line 40 "lex.l"
 
 
-int main() {
-    while (yylex() != 0){}
-    return 0;
-}
+// int main() {
+//     while (yylex() != 0){}
+//     return 0;
+// }
 

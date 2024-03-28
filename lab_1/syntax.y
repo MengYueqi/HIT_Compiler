@@ -1,7 +1,7 @@
 %{
 # include <stdio.h>
 # include <stdlib.h>
-# include "parser.h"
+# include "lex.yy.c"
 %}
 
 %union{
@@ -15,36 +15,8 @@
 %%
 
 expr : expr PLUS expr
-     | expr SEMI expr
-     | expr TIMES expr
-     | expr DIVIDE expr
-     | LPAREN expr RPAREN
-     | NUMBER
+     | INT
      ;
 
 %%
 
-int yylex() {
-    int c = getchar();
-    if (c == EOF) return 0;
-    if (c == '+') return PLUS;
-    if (c == '-') return MINUS;
-    if (c == '*') return TIMES;
-    if (c == '/') return DIVIDE;
-    if (c == '(') return LPAREN;
-    if (c == ')') return RPAREN;
-    if (c == 'a') {printf("This a!\n"); return NUMBER; }
-    return 0;
-}
-
-void yyerror(char *s) {
-    fprintf(stderr "Error: %s\n" s);
-}
-
-int main() {
-    while(yylex() != 0){
-        yylex();
-    }
-    yyparse();
-    return 0;
-}

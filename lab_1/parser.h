@@ -1,4 +1,11 @@
 # define MAXNUM 10
+# include <stdio.h>
+# include <ctype.h>
+# include <string.h>
+# include <stdlib.h>
+extern int yylineno;
+extern char* yytext;
+extern int yylex(void);
 
 struct TreeNode
 {
@@ -9,9 +16,9 @@ struct TreeNode
     // 节点内数据
     union data
     {
-        int INT;
+        int INT_NUM;
         char *ID;
-        float FLOAT;
+        float FLOAT_NUM;
     };
     
 };
