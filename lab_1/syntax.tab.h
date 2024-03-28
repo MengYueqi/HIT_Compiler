@@ -63,11 +63,13 @@
      IF = 279,
      ELSE = 280,
      WHILE = 281,
-     TIMES = 282,
-     LPAREN = 283,
-     NUMBER = 284,
-     RPAREN = 285,
-     DIVIDE = 286
+     INT = 282,
+     FLOAT = 283,
+     TIMES = 284,
+     LPAREN = 285,
+     NUMBER = 286,
+     RPAREN = 287,
+     DIVIDE = 288
    };
 #endif
 /* Tokens.  */
@@ -95,11 +97,13 @@
 #define IF 279
 #define ELSE 280
 #define WHILE 281
-#define TIMES 282
-#define LPAREN 283
-#define NUMBER 284
-#define RPAREN 285
-#define DIVIDE 286
+#define INT 282
+#define FLOAT 283
+#define TIMES 284
+#define LPAREN 285
+#define NUMBER 286
+#define RPAREN 287
+#define DIVIDE 288
 
 
 
@@ -111,7 +115,7 @@ typedef union YYSTYPE
     Node node;
 }
 /* Line 1529 of yacc.c.  */
-#line 115 "syntax.tab.h"
+#line 119 "syntax.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

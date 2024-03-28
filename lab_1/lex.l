@@ -10,7 +10,9 @@ digit [0-9]
 %%
 
 [\r\n]+
-[ \t]+      printf("Whitespace, length %lu\n", yyleng);
+[ \t]+      
+[+-]?0[xX][0-9a-fA-F]+|[+-]?0[0-7]*|[+-]?([1-9][0-9]*|0) {printf("INT\n"); return INT;}
+[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)? {printf("FLOAT\n"); return FLOAT;}
 ";"   {printf("SEMI\n"); return SEMI;}
 ","   {printf("COMMA\n"); return COMMA;}
 "="   {printf("ASSIGNOP\n"); return ASSIGNOP;}
