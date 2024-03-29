@@ -1,8 +1,8 @@
-# define MAXNUM 10
 # include <stdio.h>
 # include <ctype.h>
 # include <string.h>
 # include <stdlib.h>
+# define MAXNUM 10
 extern int yylineno;
 extern char* yytext;
 extern int yylex(void);
@@ -24,5 +24,7 @@ struct TreeNode
 };
 
 typedef struct TreeNode* Node;
+Node nodeList[500];
+Node newNode(char *name, int num_child, int line, Node childList[]);
 void yyerror(char *msg);
 extern int yylex(void);

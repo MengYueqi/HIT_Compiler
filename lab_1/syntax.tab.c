@@ -1488,9 +1488,14 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-      
+        case 2:
+#line 24 "syntax.y"
+    {newNode("Test!");printf("%s", (yyvsp[(1) - (1)].TreeNode)); printf("Begin!\n");;}
+    break;
+
+
 /* Line 1267 of yacc.c.  */
-#line 1494 "syntax.tab.c"
+#line 1499 "syntax.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);

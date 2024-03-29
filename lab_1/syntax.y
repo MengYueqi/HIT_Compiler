@@ -21,7 +21,7 @@
 %%
 
 // High-level Definitions
-Program : ExtDefList
+Program : ExtDefList {newNode("Test!");printf("%s", $1); printf("Begin!\n");}
     ;
 ExtDefList : ExtDef ExtDefList
     |
