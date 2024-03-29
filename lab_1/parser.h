@@ -28,3 +28,4 @@ Node nodeList[500];
 Node newNode(char *name, int num_child, int line, Node childList[]);
 void yyerror(char *msg);
 extern int yylex(void);
+void DFS(Node root);

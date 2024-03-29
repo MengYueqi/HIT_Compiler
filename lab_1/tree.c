@@ -36,22 +36,22 @@ void DFS(Node root) {
     }
 }
 
-int main(){
-    // 构建一棵树，这里简化为只有两层
-    Node leaf1 = newNode("Leaf1", 0, 10, NULL);
-    Node leaf2 = newNode("Leaf2", 0, 15, NULL);
-    Node leaf3 = newNode("Leaf3", 0, 20, NULL);
+// int main(){
+//     // 构建一棵树，这里简化为只有两层
+//     Node leaf1 = newNode("Leaf1", 0, 10, NULL);
+//     Node leaf2 = newNode("Leaf2", 0, 15, NULL);
+//     Node leaf3 = newNode("Leaf3", 0, 20, NULL);
 
-    Node node1[2] = {leaf1, leaf2};
-    Node node2[1] = {leaf3};
-    Node intermediate1 = newNode("Intermediate1", 2, 5, node1);
-    Node intermediate2 = newNode("Intermediate2", 1, 12, node2);
+//     Node node1[2] = {leaf1, leaf2};
+//     Node node2[1] = {leaf3};
+//     Node intermediate1 = newNode("Intermediate1", 2, 5, node1);
+//     Node intermediate2 = newNode("Intermediate2", 1, 12, node2);
 
-    Node node3[2] = {intermediate1, intermediate2};
-    Node root = newNode("Root", 2, 1, node3);
+//     Node node3[2] = {intermediate1, intermediate2};
+//     Node root = newNode("Root", 2, 1, node3);
 
-    // 深度优先遍历树
-    DFS(root);
+//     // 深度优先遍历树
+//     DFS(root);
 
-    return 0;
-}
+//     return 0;
+// }
