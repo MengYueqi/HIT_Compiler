@@ -13,7 +13,7 @@
 %token <node> OR DOT NOT TYPE LP RP LB RB LC RC STRUCT RETURN IF ELSE WHILE INT FLOAT
 %token <node> TIMES LPAREN NUMBER RPAREN DIVIDE ID
 
-// 终结符集合
+// 非终结符集合
 %type <node> Program ExtDefList ExtDef Specifier ExtDecList FunDec VarDec
 %type <node> StructSpecifier OptTag DefList Tag VarList ParamDec StmtList Stmt CompSt
 %type <node> Exp Dec Args Def DecList
