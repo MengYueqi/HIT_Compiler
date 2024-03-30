@@ -17,7 +17,7 @@ struct TreeNode
     union{
         int INT_NUM;
         char *ID_NAME;
-        float FLOAT_NUM;
+        double FLOAT_NUM;
     };
     
 };
