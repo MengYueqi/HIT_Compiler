@@ -835,12 +835,12 @@ YY_RULE_SETUP
 case 3:
 YY_RULE_SETUP
 #line 18 "lex.l"
-{printf("INT\n"); return INT;}
+{yylval.node = newNode("INT", 0, yylineno, NULL); return INT;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 19 "lex.l"
-{printf("FLOAT\n"); return FLOAT;}
+{yylval.node = newNode("FLOAT", 0, yylineno, NULL); return FLOAT;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP

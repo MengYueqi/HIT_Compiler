@@ -24,7 +24,7 @@
 Program : ExtDefList {Node child[1] = {$1}; $$ = newNode("Program", 1, yylineno, child); DFS($$)}
     ;
 ExtDefList : ExtDef ExtDefList {Node child[2] = {$1, $2}; $$ = newNode("ExtDefList", 2, yylineno, child);}
-    |
+    | {$$ = newNode("ExtDefList", 0, -1, NULL);}
     ;
 ExtDef : Specifier ExtDecList SEMI {Node child[3] = {$1, $2, $3}; $$= newNode("ExtDef", 3, yylineno, child);}
     | Specifier SEMI {Node child[2] = {$1, $2}; $$= newNode("ExtDef", 2, yylineno, child);}
@@ -42,7 +42,7 @@ StructSpecifier : STRUCT OptTag LC DefList RC {Node child[5] = {$1, $2, $3, $4, 
     | STRUCT Tag {Node child[2] = {$1, $2}; $$ = newNode("StructSpecifier", 2, yylineno, child);}
     ;
 OptTag : ID {Node child[1] = {$1}; $$ = newNode("OptTag", 1, yylineno, child);}
-    | /* empty */ 
+    | {$$ = newNode("OptTag", 0, -1, NULL);}
     ;   
 Tag : ID {Node child[1] = {$1}; $$ = newNode("Tag", 1, yylineno, child);}
     ;
@@ -64,7 +64,7 @@ ParamDec : Specifier VarDec {Node child[2] = {$1, $2}; $$ = newNode("ParamDec", 
 CompSt : LC DefList StmtList RC {Node child[4] = {$1, $2, $3, $4}; $$ = newNode("CompSt", 4, yylineno, child);}
     ;
 StmtList : Stmt StmtList {Node child[2] = {$1, $2}; $$ = newNode("StmtList", 2, yylineno, child);}
-    | /* empty */
+    | {$$ = newNode("StmtList", 0, -1, NULL);}
     ;
 Stmt : Exp SEMI {Node child[2] = {$1, $2}; $$ = newNode("Stmt", 2, yylineno, child);}
     | CompSt {Node child[1] = {$1}; $$ = newNode("Stmt", 1, yylineno, child);}
@@ -76,7 +76,7 @@ Stmt : Exp SEMI {Node child[2] = {$1, $2}; $$ = newNode("Stmt", 2, yylineno, chi
 
 // Local Definitions
 DefList : Def DefList {Node child[2] = {$1, $2}; $$ = newNode("DefList", 2, yylineno, child);}
-    | /* empty */
+    | {$$ = newNode("DefList", 0, -1, NULL);}
     ;
 Def : Specifier DecList SEMI {Node child[3] = {$1, $2, $3}; $$ = newNode("Def", 3, yylineno, child);}
     ;
@@ -108,9 +108,8 @@ Exp : Exp ASSIGNOP Exp {Node child[3] = {$1, $2, $3}; $$ = newNode("Exp", 3, yyl
     | FLOAT {Node child[1] = {$1}; $$ = newNode("Exp", 1, yylineno, child);}
     ;
 
-Args : Exp COMMA Args
-    | Exp
+Args : Exp COMMA Args {Node child[3] = {$1, $2, $3}; $$ = newNode("Args", 3, yylineno, child);}
+    | Exp {Node child[1] = {$1}; $$ = newNode("Args", 1, yylineno, child);}
     ;
-
 %%
 

@@ -1,4 +1,4 @@
 int main(){
-    int a = 0.9e9;
+    float a = 0.9e9;
     int b = 0xf;
 }

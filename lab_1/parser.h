@@ -14,8 +14,7 @@ struct TreeNode
     int num_child; // 子节点数量
     struct TreeNode *child[MAXNUM]; // 子节点指针数组
     // 节点内数据
-    union data
-    {
+    union{
         int INT_NUM;
         char *ID_NAME;
         float FLOAT_NUM;

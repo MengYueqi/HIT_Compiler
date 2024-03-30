@@ -1498,6 +1498,11 @@ yyreduce:
     {Node child[2] = {(yyvsp[(1) - (2)].node), (yyvsp[(2) - (2)].node)}; (yyval.node) = newNode("ExtDefList", 2, yylineno, child);;}
     break;
 
+  case 4:
+#line 27 "syntax.y"
+    {(yyval.node) = newNode("ExtDefList", 0, -1, NULL);;}
+    break;
+
   case 5:
 #line 29 "syntax.y"
     {Node child[3] = {(yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), (yyvsp[(3) - (3)].node)}; (yyval.node)= newNode("ExtDef", 3, yylineno, child);;}
@@ -1546,6 +1551,11 @@ yyreduce:
   case 14:
 #line 44 "syntax.y"
     {Node child[1] = {(yyvsp[(1) - (1)].node)}; (yyval.node) = newNode("OptTag", 1, yylineno, child);;}
+    break;
+
+  case 15:
+#line 45 "syntax.y"
+    {(yyval.node) = newNode("OptTag", 0, -1, NULL);;}
     break;
 
   case 16:
@@ -1598,6 +1608,11 @@ yyreduce:
     {Node child[2] = {(yyvsp[(1) - (2)].node), (yyvsp[(2) - (2)].node)}; (yyval.node) = newNode("StmtList", 2, yylineno, child);;}
     break;
 
+  case 26:
+#line 67 "syntax.y"
+    {(yyval.node) = newNode("StmtList", 0, -1, NULL);;}
+    break;
+
   case 27:
 #line 69 "syntax.y"
     {Node child[2] = {(yyvsp[(1) - (2)].node), (yyvsp[(2) - (2)].node)}; (yyval.node) = newNode("Stmt", 2, yylineno, child);;}
@@ -1631,6 +1646,11 @@ yyreduce:
   case 33:
 #line 78 "syntax.y"
     {Node child[2] = {(yyvsp[(1) - (2)].node), (yyvsp[(2) - (2)].node)}; (yyval.node) = newNode("DefList", 2, yylineno, child);;}
+    break;
+
+  case 34:
+#line 79 "syntax.y"
+    {(yyval.node) = newNode("DefList", 0, -1, NULL);;}
     break;
 
   case 35:
@@ -1748,9 +1768,19 @@ yyreduce:
     {Node child[1] = {(yyvsp[(1) - (1)].node)}; (yyval.node) = newNode("Exp", 1, yylineno, child);;}
     break;
 
+  case 58:
+#line 111 "syntax.y"
+    {Node child[3] = {(yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), (yyvsp[(3) - (3)].node)}; (yyval.node) = newNode("Args", 3, yylineno, child);;}
+    break;
+
+  case 59:
+#line 112 "syntax.y"
+    {Node child[1] = {(yyvsp[(1) - (1)].node)}; (yyval.node) = newNode("Args", 1, yylineno, child);;}
+    break;
+
 
 /* Line 1267 of yacc.c.  */
-#line 1754 "syntax.tab.c"
+#line 1784 "syntax.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1964,7 +1994,7 @@ yyreturn:
 }
 
 
-#line 115 "syntax.y"
+#line 114 "syntax.y"
 
 
 

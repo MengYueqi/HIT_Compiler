@@ -28,7 +28,20 @@ void DFS(Node root) {
     }
     
     // 打印当前节点信息
-    printf("Node Name: %s, Line: %d\n", root->name, root->line);
+    if (root->num_child == 0){
+        printf("%s", root->name);
+        if (!strcmp(root->name, "TYPE")){
+            printf(": %s", root->ID_NAME);
+        } else if (!strcmp(root->name, "INT")){
+            printf(": %d", root->INT_NUM);
+        } else if (!strcmp(root->name, "FLOAT")){
+            printf(": %f", root->FLOAT_NUM);
+        }
+        
+        printf("\n");
+    } else {
+        printf("%s (%d)\n", root->name, root->line);
+    }
 
     // 递归遍历子节点
     for (int i = 0; i < root->num_child; i++) {

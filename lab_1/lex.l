@@ -15,8 +15,8 @@ digit [0-9]
 
 [\r\n]+
 [ \t]+      
-[+-]?0[xX][0-9a-fA-F]+|[+-]?0[0-7]*|[+-]?([1-9][0-9]*|0) {printf("INT\n"); return INT;}
-[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)? {printf("FLOAT\n"); return FLOAT;}
+[+-]?0[xX][0-9a-fA-F]+|[+-]?0[0-7]*|[+-]?([1-9][0-9]*|0) {yylval.node = newNode("INT", 0, yylineno, NULL); return INT;}
+[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)? {yylval.node = newNode("FLOAT", 0, yylineno, NULL); return FLOAT;}
 ";"   {yylval.node = newNode("SEMI", 0, yylineno, NULL); return SEMI;}
 ","   {yylval.node = newNode("COMMA", 0, yylineno, NULL); return COMMA;}
 "="   {yylval.node = newNode("ASSIGNOP", 0, yylineno, NULL); return ASSIGNOP;}
