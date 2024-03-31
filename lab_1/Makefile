@@ -13,7 +13,7 @@ BISON = bison
 CFLAGS = -Wall
 
 # Target executable
-TARGET = calc
+TARGET = parser
 
 # Bison source
 BISON_FLAGS = -d
@@ -26,8 +26,6 @@ MAIN = main.c
 TREE_SOURCE = tree.c
 BISON_SOURCE = syntax.y
 BISON_OUT = syntax.tab.c syntax.tab.h
-
-# 还没写进 Makefile 的编译命令：gcc main.c syntax.tab.c tree.c lex.yy.c -ll -ly -o parser
 
 all: $(TARGET)
 
