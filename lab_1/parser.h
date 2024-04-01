@@ -6,6 +6,7 @@
 extern int yylineno;
 extern char* yytext;
 extern int yylex(void);
+int fault;
 
 struct TreeNode
 {

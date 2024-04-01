@@ -61,40 +61,44 @@ Node newNode(char *name, int num_child, int line, Node childList[]){
 
 // 深度优先遍历函数
 void DFS(Node root, int level) {
-    if (root == NULL) {
+    if (fault == 1){
         return;
-    }
-    
-    // 打印当前节点信息
-    if (root->num_child == 0){
-        if (root->line != -1){
-            for (int i = 0; i < level; i++){
-                printf("  ");
-            }
-            printf("%s", root->name);
-            if (!strcmp(root->name, "TYPE")){
-                printf(": %s", root->ID_NAME);
-            } else if (!strcmp(root->name, "ID")){
-                printf(": %s", root->ID_NAME);
-            } else if (!strcmp(root->name, "INT")){
-                printf(": %d", root->INT_NUM);
-            } else if (!strcmp(root->name, "FLOAT")){
-                printf(": %f", root->FLOAT_NUM);
-            }
-            printf("\n");
-        }
     } else {
-        if (root->line !=-1){
-            for (int i = 0; i < level; i++){
-                printf("  ");
-            }
-            printf("%s (%d)\n", root->name, root->line);
+        if (root == NULL) {
+            return;
         }
-    }
+        
+        // 打印当前节点信息
+        if (root->num_child == 0){
+            if (root->line != -1){
+                for (int i = 0; i < level; i++){
+                    printf("  ");
+                }
+                printf("%s", root->name);
+                if (!strcmp(root->name, "TYPE")){
+                    printf(": %s", root->ID_NAME);
+                } else if (!strcmp(root->name, "ID")){
+                    printf(": %s", root->ID_NAME);
+                } else if (!strcmp(root->name, "INT")){
+                    printf(": %d", root->INT_NUM);
+                } else if (!strcmp(root->name, "FLOAT")){
+                    printf(": %f", root->FLOAT_NUM);
+                }
+                printf("\n");
+            }
+        } else {
+            if (root->line !=-1){
+                for (int i = 0; i < level; i++){
+                    printf("  ");
+                }
+                printf("%s (%d)\n", root->name, root->line);
+            }
+        }
 
-    // 递归遍历子节点
-    for (int i = 0; i < root->num_child; i++) {
-        DFS(root->child[i], level+1);
+        // 递归遍历子节点
+        for (int i = 0; i < root->num_child; i++) {
+            DFS(root->child[i], level+1);
+        }
     }
 }
 
