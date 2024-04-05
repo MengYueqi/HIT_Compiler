@@ -2,9 +2,6 @@
 extern int yyparse();
 extern void yyrestart(FILE *);
 
-void yyerror(char *massage) {
-    fprintf(stderr, "Error type B at Line %d: %s.\n", yylineno, massage);
-}
 
 int main(int argc, char** argv) {
     fault = 0;
@@ -16,5 +13,7 @@ int main(int argc, char** argv) {
     }
     yyrestart(f);
     yyparse();
+    fclose(f);
+    DFS(root, 0);
     return 0;
 }

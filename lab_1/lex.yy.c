@@ -965,7 +965,7 @@ YY_RULE_SETUP
 case 29:
 YY_RULE_SETUP
 #line 44 "lex.l"
-{printf("Invalid character: %s\n", yytext); fault = 1;}
+{printf("Error type A at Line %d: Mysterious character \"%s\".\n", yylineno, yytext); fault = 1;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP

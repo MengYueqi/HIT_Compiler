@@ -1,5 +1,10 @@
 # include "parser.h"
 
+void yyerror(char *massage) {
+    fault = 1;
+    fprintf(stderr, "Error type B at Line %d: %s.\n", yylineno, massage);
+}
+
 // 字符串转换成 int 值的函数
 int string_to_int(const char *str) {
     char *endptr;

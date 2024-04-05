@@ -41,7 +41,7 @@ digit [0-9]
 "while"  {yylval.node = newNode("WHILE", 0, yylineno, NULL); return WHILE;}
 "int"|"float" {yylval.node = newNode("TYPE", 0, yylineno, NULL); return TYPE;}
 [a-zA-Z_][a-zA-Z0-9_]* {yylval.node = newNode("ID", 0, yylineno, NULL); return ID;}
-.               {printf("Invalid character: %s\n", yytext); fault = 1;}
+.               {printf("Error type A at Line %d: Mysterious character \"%s\".\n", yylineno, yytext); fault = 1;}
 
 %%
 

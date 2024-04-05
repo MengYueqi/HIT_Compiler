@@ -3,5 +3,9 @@
 # include "parser.h"
 
 void semantic(Node root){
-    printf("%p", root);
+    if (root == NULL){
+        return;
+    }
+    
+    printf("%s", root->name);
 }

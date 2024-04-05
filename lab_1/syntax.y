@@ -21,7 +21,7 @@
 %%
 
 // High-level Definitions
-Program : ExtDefList {Node child[1] = {$1}; $$ = newNode("Program", 1, yylineno, child); DFS($$, 0)}
+Program : ExtDefList {Node child[1] = {$1}; $$ = newNode("Program", 1, yylineno, child); root = $$;}
     ;
 ExtDefList : ExtDef ExtDefList {Node child[2] = {$1, $2}; $$ = newNode("ExtDefList", 2, yylineno, child);}
     | {$$ = newNode("ExtDefList", 0, -1, NULL);}

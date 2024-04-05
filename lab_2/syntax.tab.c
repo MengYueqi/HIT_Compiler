@@ -1490,7 +1490,7 @@ yyreduce:
     {
         case 2:
 #line 24 "syntax.y"
-    {Node child[1] = {(yyvsp[(1) - (1)].node)}; (yyval.node) = newNode("Program", 1, yylineno, child); DFS((yyval.node), 0); root = (yyval.node);;}
+    {Node child[1] = {(yyvsp[(1) - (1)].node)}; (yyval.node) = newNode("Program", 1, yylineno, child); root = (yyval.node);;}
     break;
 
   case 3:
