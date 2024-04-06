@@ -45,7 +45,7 @@ ExtDecList → VarDec
     | VarDec COMMA ExtDecList
 ```
 
-Specifiers:
+### Specifiers:
 
 ```
 Specifier → TYPE

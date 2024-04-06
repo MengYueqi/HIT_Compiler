@@ -1,13 +1,16 @@
 # include <stdio.h>
+#include <string.h>
+#include <stdarg.h>
+#include <stdlib.h>
 # include "semantic.h"
 # include "parser.h"
 
 // 设定头指针
-symbol_list head = NULL;
+symbol_node head = NULL;
 
 // 创建变量表
-symbol_list _createSymbolList(){
-    symbol_list pointer = (symbol_list)malloc(sizeof(struct _SymbolList));
+symbol_node _createSymbolList(){
+    symbol_node pointer = (symbol_node)malloc(sizeof(struct _SymbolNode));
     pointer->name = (char*)malloc(sizeof(35 * sizeof(char)));
     pointer->type = NULL;
     pointer->next = NULL;
@@ -20,7 +23,7 @@ void _initSymbolList(){
 }
 
 // 打印变量表
-void _printSymbolList(symbol_list head){
+void _printSymbolList(symbol_node head){
     head = head->next;
     while (head){
         printf("Symbol: %s, Type: %s", head->name, head->type);
@@ -29,7 +32,7 @@ void _printSymbolList(symbol_list head){
 }
 
 // 向符号表中添加记录
-void _addRecord(symbol_list sym_record){
+void _addRecord(symbol_node sym_record){
     // 头插法添加
     sym_record->next = head->next;
     head->next = sym_record;
@@ -40,8 +43,50 @@ void _ExtDef(Node root){
 
 }
 
+// 创建一个 type
+type createType(Kind kind, int num, ...)
+{
+    type t = (type)malloc(sizeof(struct _Type));
+    t->kind = kind;
+    va_list tlist;
+    va_start(tlist, num);
+    switch(kind)
+    {
+        case BASIC:
+            t->data.basic = va_arg(tlist, basic_type);
+            // printf("创建基本类型: %d\n", t->u.basic);
+            break;
+        case ARRAY:
+            t->data.arr.size = va_arg(tlist, int);
+            t->data.arr.arr_type = va_arg(tlist, type);
+            // printf("创建数组类型\n");
+            break;
+    }
+    va_end(tlist);
+    return t;
+}
+
+// 对 Specifier 的分析
+type _Specifier(Node root){
+    if (!strcmp(root->child[0]->name, "TYPE")){
+        if (!strcmp(root->child[0]->ID_NAME, "int")) {
+            return createType(BASIC, 1, INT);
+        } else if (!strcmp(root->child[0]->ID_NAME, "float")){
+            return createType(BASIC, 1, FLOAT);
+        }
+    }
+    return NULL;
+}
+
+// 对 DecList 的分析
+void _DecList(Node root, type Type){
+    
+}
+
 // 对 Def 的分析
 void _Def(Node root){
+    type Type = _Specifier(root->child[0]);
+
 
 }
 
@@ -72,7 +117,7 @@ void _Exp(Node root){
     Node child_0 = root->child[0];
     // 如果是 ID, INT, FLOAT
     if (!strcmp(child_0->name, "INT")){
-
+        
     } else if (!strcmp(child_0->name, "FLOAT")){
         printf("%f", child_0->FLOAT_NUM);
     } else if (!strcmp(child_0->name, "ID")){
