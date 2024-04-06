@@ -25,9 +25,12 @@ struct _Type{
 // 变量单元指针
 struct _SymbolNode{
     char *name;
-    type type;
+    type symbolType;
     symbol_node next;
 };
 
+// TODO: 把所有函数都声明一下
+void _Dec(Node root, type var_type);
+void _VarDec(Node root, type var_type);
 
 #endif

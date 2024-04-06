@@ -12,7 +12,7 @@ symbol_node head = NULL;
 symbol_node _createSymbolList(){
     symbol_node pointer = (symbol_node)malloc(sizeof(struct _SymbolNode));
     pointer->name = (char*)malloc(sizeof(35 * sizeof(char)));
-    pointer->type = NULL;
+    pointer->symbolType = NULL;
     pointer->next = NULL;
     return pointer;
 }
@@ -26,7 +26,7 @@ void _initSymbolList(){
 void _printSymbolList(symbol_node head){
     head = head->next;
     while (head){
-        printf("Symbol: %s, Type: %s", head->name, head->type);
+        printf("Symbol: %s, Type: %s", head->name, head->symbolType);
         head = head->next;
     }    
 }
@@ -79,9 +79,27 @@ type _Specifier(Node root){
 }
 
 // 对 DecList 的分析
-void _DecList(Node root, type Type){
-    
+void _DecList(Node root, type var_type){
+    while (root){
+        _Dec(root->child[0], var_type);
+        // 对多个变量的情况展开分析
+        if (root->child[1]){
+            _DecList(root->child[2], var_type);
+        } else {
+            break;
+        }
+    }
 }
+
+// 对 Dec 的分析
+void _Dec(Node root, type var_type){
+    _VarDec(root->child[0], var_type);
+}
+
+void _VarDec(Node root, type var_type){
+
+}
+
 
 // 对 Def 的分析
 void _Def(Node root){
