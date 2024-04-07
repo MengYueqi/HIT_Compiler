@@ -9,7 +9,7 @@
 symbol_node head = NULL;
 
 // 创建变量表
-symbol_node _createSymbolList(){
+static symbol_node _createSymbolNode(){
     symbol_node pointer = (symbol_node)malloc(sizeof(struct _SymbolNode));
     pointer->name = (char*)malloc(sizeof(35 * sizeof(char)));
     pointer->symbolType = NULL;
@@ -18,34 +18,46 @@ symbol_node _createSymbolList(){
 }
 
 // 初始化变量表
-void _initSymbolList(){
-    head = _createSymbolList();
+static void _initSymbolList(){
+    head = _createSymbolNode();
 }
 
 // 打印变量表
-void _printSymbolList(symbol_node head){
+static void _printSymbolList(symbol_node head){
     head = head->next;
     while (head){
-        printf("Symbol: %s, Type: %s", head->name, head->symbolType);
+        printf("Symbol: %s\n", head->name);
         head = head->next;
     }    
 }
 
+// 检查变量表中是否有相关数据
+// 返回 1 代表在表中找到
+static int _checkRecord(symbol_node node){
+    symbol_node p = head->next;
+    while (p){
+        if (!strcmp(p->name, node->name)){
+            return 1;
+        }
+        p = p->next;
+    }
+    return 0;
+}
+
 // 向符号表中添加记录
-void _addRecord(symbol_node sym_record){
+static void _addRecord(symbol_node sym_record){
     // 头插法添加
     sym_record->next = head->next;
     head->next = sym_record;
 }
 
 // 对 ExtDef 的分析
-void _ExtDef(Node root){
+static void _ExtDef(Node root){
 
 }
 
 // 创建一个 type
-type createType(Kind kind, int num, ...)
-{
+static type _createType(Kind kind, int num, ...){
     type t = (type)malloc(sizeof(struct _Type));
     t->kind = kind;
     va_list tlist;
@@ -67,49 +79,67 @@ type createType(Kind kind, int num, ...)
 }
 
 // 对 Specifier 的分析
-type _Specifier(Node root){
+static type _Specifier(Node root){
     if (!strcmp(root->child[0]->name, "TYPE")){
         if (!strcmp(root->child[0]->ID_NAME, "int")) {
-            return createType(BASIC, 1, INT);
+            return _createType(BASIC, 1, INT);
         } else if (!strcmp(root->child[0]->ID_NAME, "float")){
-            return createType(BASIC, 1, FLOAT);
+            return _createType(BASIC, 1, FLOAT);
         }
     }
     return NULL;
 }
 
 // 对 DecList 的分析
-void _DecList(Node root, type var_type){
-    while (root){
-        _Dec(root->child[0], var_type);
-        // 对多个变量的情况展开分析
-        if (root->child[1]){
-            _DecList(root->child[2], var_type);
-        } else {
-            break;
-        }
+static void _DecList(Node root, type var_type){
+    _Dec(root->child[0], var_type);
+    // 对多个变量的情况展开分析
+    if (root->child[1]){
+        _DecList(root->child[2], var_type);
+    } else {
+        return;
     }
 }
 
 // 对 Dec 的分析
-void _Dec(Node root, type var_type){
+static void _Dec(Node root, type var_type){
     _VarDec(root->child[0], var_type);
 }
 
-void _VarDec(Node root, type var_type){
+// 对 VarDec 的分析
+static void _VarDec(Node root, type var_type){
+    // 获取 ID 节点
+    Node id = root->child[0];
+    while (id->child[0]){
+        id = id->child[0];
+    }
+    // 初始化 node 节点的数据并设置
+    symbol_node temp = _createSymbolNode();
+    strcpy(temp->name, id->ID_NAME);
+    // 非数组元素
+    if (!strcmp(root->child[0]->name, "ID")){
+        temp->symbolType = var_type;
+    } else {
+
+    }
+    // 向记录表中进行添加
+    if (_checkRecord(temp)){
+        printf("Error type 3 at Line %d: Redefined variable \"%s\".\n", root->line, temp->name);
+    } else {
+        _addRecord(temp);
+    }
 
 }
 
 
 // 对 Def 的分析
-void _Def(Node root){
+static void _Def(Node root){
     type Type = _Specifier(root->child[0]);
-
-
+    _DecList(root->child[1], Type);
 }
 
 // 对 Exp 的分析
-void _Exp(Node root){
+static void _Exp(Node root){
     /* Exp 对应的语法
     Exp -> Exp ASSIGNOP Exp
          | Exp AND Exp
@@ -137,17 +167,23 @@ void _Exp(Node root){
     if (!strcmp(child_0->name, "INT")){
         
     } else if (!strcmp(child_0->name, "FLOAT")){
-        printf("%f", child_0->FLOAT_NUM);
+
     } else if (!strcmp(child_0->name, "ID")){
         /* code */
     }
 }
 
+// 向外暴露的语义分析器
 void semantic(Node root){
+    _initSymbolList();
+    _semantic(root);
+}
+
+// 语义分析函数
+static void _semantic(Node root){
     if (root == NULL){
         return;
     }
-
     // 根据不同的产生式部分进行分析 
     if (!strcmp(root->name, "ExtDef")){
         _ExtDef(root);
@@ -157,7 +193,7 @@ void semantic(Node root){
         _Exp(root); 
     }
     for (int i = 0; i < root->num_child; i++){
-        semantic(root->child[i]);
+        _semantic(root->child[i]);
     }
-    
+    // _printSymbolList(head); 
 }

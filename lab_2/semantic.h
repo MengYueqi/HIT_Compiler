@@ -29,8 +29,20 @@ struct _SymbolNode{
     symbol_node next;
 };
 
-// TODO: 把所有函数都声明一下
-void _Dec(Node root, type var_type);
-void _VarDec(Node root, type var_type);
+// 内部函数的声明
+static void _initSymbolList();
+static void _printSymbolList(symbol_node head);
+static int _checkRecord(symbol_node node);
+static void _addRecord(symbol_node sym_record);
+static void _ExtDef(Node root);
+static type _createType(Kind kind, int num, ...);
+static type _Specifier(Node root);
+static symbol_node _createSymbolNode();
+static void _DecList(Node root, type var_type);
+static void _Dec(Node root, type var_type);
+static void _VarDec(Node root, type var_type);
+static void _semantic(Node root);
+static void _Def(Node root);
+static void _Exp(Node root);
 
 #endif
