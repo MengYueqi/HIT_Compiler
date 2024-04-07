@@ -32,7 +32,7 @@ struct _SymbolNode{
 // 内部函数的声明
 static void _initSymbolList();
 static void _printSymbolList(symbol_node head);
-static int _checkRecord(symbol_node node);
+static symbol_node _findRecord(symbol_node node);
 static void _addRecord(symbol_node sym_record);
 static void _ExtDef(Node root);
 static type _createType(Kind kind, int num, ...);
@@ -43,6 +43,6 @@ static void _Dec(Node root, type var_type);
 static void _VarDec(Node root, type var_type);
 static void _semantic(Node root);
 static void _Def(Node root);
-static void _Exp(Node root);
+static type _Exp(Node root);
 
 #endif

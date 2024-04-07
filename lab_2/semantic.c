@@ -31,17 +31,16 @@ static void _printSymbolList(symbol_node head){
     }    
 }
 
-// 检查变量表中是否有相关数据
-// 返回 1 代表在表中找到
-static int _checkRecord(symbol_node node){
+// 检查变量表中是否有相关数据，有则返回对应指针，没有返回 NULL
+static symbol_node _findRecord(symbol_node node){
     symbol_node p = head->next;
     while (p){
         if (!strcmp(p->name, node->name)){
-            return 1;
+            return p;
         }
         p = p->next;
     }
-    return 0;
+    return NULL;
 }
 
 // 向符号表中添加记录
@@ -66,12 +65,10 @@ static type _createType(Kind kind, int num, ...){
     {
         case BASIC:
             t->data.basic = va_arg(tlist, basic_type);
-            // printf("创建基本类型: %d\n", t->u.basic);
             break;
         case ARRAY:
             t->data.arr.size = va_arg(tlist, int);
             t->data.arr.arr_type = va_arg(tlist, type);
-            // printf("创建数组类型\n");
             break;
     }
     va_end(tlist);
@@ -120,15 +117,21 @@ static void _VarDec(Node root, type var_type){
     if (!strcmp(root->child[0]->name, "ID")){
         temp->symbolType = var_type;
     } else {
-
+        // 数组元素的处理
+        Node vardec_node = root;
+        // 获取数组的类型和 size
+        while (vardec_node->num_child != 1){
+            temp->symbolType = _createType(ARRAY, 2, atoi(vardec_node->child[2]), var_type);
+            vardec_node = vardec_node->child[0];
+        }
     }
     // 向记录表中进行添加
-    if (_checkRecord(temp)){
+    if (_findRecord(temp)){
+        fault = 1;
         printf("Error type 3 at Line %d: Redefined variable \"%s\".\n", root->line, temp->name);
     } else {
         _addRecord(temp);
     }
-
 }
 
 
@@ -139,37 +142,24 @@ static void _Def(Node root){
 }
 
 // 对 Exp 的分析
-static void _Exp(Node root){
-    /* Exp 对应的语法
-    Exp -> Exp ASSIGNOP Exp
-         | Exp AND Exp
-         | Exp OR Exp
-         | Exp RELOP Exp
-         | Exp PLUS Exp
-         | Exp MINUS Exp
-         | Exp STAR Exp
-         | Exp DIV Exp
-         | LP Exp RP
-         | MINUS Exp
-         | NOT Exp
-         | ID LP Args RP
-         | ID LP RP
-         | Exp LB Exp RB
-         | Exp DOT ID
-         | ID
-         | INT
-         | FLOAT
-         */
-    
-    // 分析第 0 个 child
-    Node child_0 = root->child[0];
+static type _Exp(Node root){
     // 如果是 ID, INT, FLOAT
-    if (!strcmp(child_0->name, "INT")){
-        
-    } else if (!strcmp(child_0->name, "FLOAT")){
+    if (!strcmp(root->child[0]->name, "INT")){
 
-    } else if (!strcmp(child_0->name, "ID")){
-        /* code */
+    } else if (!strcmp(root->child[0]->name, "FLOAT")){
+
+    } else if (!strcmp(root->child[0]->name, "ID")){
+        // 对 ID 的分析
+        // 这里注意的是，变量表中的 node 和树中的 node 是不一样的类型
+        // 所以要转换一下
+        symbol_node s = _createSymbolNode();
+        s->name = root->child[0]->ID_NAME;
+        if (!_findRecord(s)){
+            fault = 1;
+            printf("Error type 1 at Line %d: Undefined variable \"%s\".\n", root->child[0]->line, root->child[0]->ID_NAME);
+        } else {
+            return _findRecord(root->child[0])->symbolType;
+        }
     }
 }
 
