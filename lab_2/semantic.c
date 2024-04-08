@@ -1,7 +1,7 @@
 # include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
+# include <string.h>
+# include <stdarg.h>
+# include <stdlib.h>
 # include "semantic.h"
 # include "parser.h"
 
@@ -145,9 +145,9 @@ static void _Def(Node root){
 static type _Exp(Node root){
     // 如果是 ID, INT, FLOAT
     if (!strcmp(root->child[0]->name, "INT")){
-
+        return _createType(BASIC, 1, INT);
     } else if (!strcmp(root->child[0]->name, "FLOAT")){
-
+        return _createType(BASIC, 1, FLOAT);
     } else if (!strcmp(root->child[0]->name, "ID")){
         // 对 ID 的分析
         // 这里注意的是，变量表中的 node 和树中的 node 是不一样的类型
@@ -158,7 +158,20 @@ static type _Exp(Node root){
             fault = 1;
             printf("Error type 1 at Line %d: Undefined variable \"%s\".\n", root->child[0]->line, root->child[0]->ID_NAME);
         } else {
-            return _findRecord(root->child[0])->symbolType;
+            return _findRecord(s)->symbolType;
+        }
+    } else if (!strcmp(root->child[0]->name, "Exp")){
+        // 对数组元素展开分析
+        if (!strcmp(root->child[1]->name, "LB")){
+            type t1 = _Exp(root->child[0]);
+            type t2 = _Exp(root->child[2]);
+            if (t1->kind != ARRAY){
+                fault = 1;
+                printf("Error type 10 at Line %d: \"%s\" is not an array.\n", root->child[0]->line, root->child[0]->child[0]->ID_NAME);
+            } else if (t2->kind != BASIC || t2->data.basic != INT){
+                fault = 1;
+                printf("Error type 12 at Line %d: \"%s\" is not an integer.\n", root->child[0]->line, root->child[2]->child[0]->ID_NAME);
+            }
         }
     }
 }

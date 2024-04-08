@@ -1,6 +1,6 @@
 int main()
 {
-    float i;
-    float i;
-    j;
+	float i[3];
+	float c = 1.1;
+	i[c];
 }
