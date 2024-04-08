@@ -172,6 +172,30 @@ static type _Exp(Node root){
                 fault = 1;
                 printf("Error type 12 at Line %d: \"%s\" is not an integer.\n", root->child[0]->line, root->child[2]->child[0]->ID_NAME);
             }
+        } else if (!strcmp(root->child[1]->name, "DOT")){
+
+        } else if (!strcmp(root->child[1]->name, "ASSIGNOP")){
+            // 先对不能为左值的数据进行审查
+            if (!strcmp(root->child[0]->child[0]->name, "INT") || !strcmp(root->child[0]->child[0]->name, "FLOAT")){
+                fault = 1;
+                printf("Error type 6 at Line %d: The left-hand side of an assignment must be a variable.\n", root->child[0]->line);
+            } else if (!strcmp(root->child[0]->child[0]->name, "ID")){
+                // 对于有关 ID 的赋值操作
+                type t1 = _Exp(root->child[0]);
+                type t2 = _Exp(root->child[2]);
+                if (t1->data.basic != t2->data.basic){
+                    fault = 1;
+                    printf("Error type 5 at Line %d: Type mismatched for assignment.\n", root->child[0]->line);
+                }
+            }
+        } else {
+            // 对其他运算操作进行审查
+            type t1 = _Exp(root->child[0]);
+            type t2 = _Exp(root->child[2]);
+            if (t1->data.basic != t2->data.basic){
+                fault = 1;
+                printf("Error type 7 at Line %d: Type mismatched for operands.\n", root->child[0]->line);
+            }
         }
     }
 }
