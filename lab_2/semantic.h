@@ -44,5 +44,6 @@ static void _VarDec(Node root, type var_type);
 static void _semantic(Node root);
 static void _Def(Node root);
 static type _Exp(Node root);
+static void _ExtDefList(Node root, type var_type);
 
 #endif

@@ -52,7 +52,16 @@ static void _addRecord(symbol_node sym_record){
 
 // 对 ExtDef 的分析
 static void _ExtDef(Node root){
+    // 对全局定义的符号的分析
+    type t = _Specifier(root->child[0]);
+    if (!strcmp(root->child[1]->name, "ExtDecList")){
+        _ExtDefList(root->child[1], t);
+    }
+}
 
+// 对 ExtDecList 进行分析
+static void _ExtDefList(Node root, type var_type){
+    _VarDec(root->child[0], var_type);
 }
 
 // 创建一个 type
