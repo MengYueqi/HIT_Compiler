@@ -1,9 +1,8 @@
-float k;
 struct s{
 	float i;
+	int k;
 };
 int main()
 {
-	float c = 1.1;
-	c = i.k;
+s.j;
 }

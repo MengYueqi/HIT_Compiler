@@ -32,7 +32,7 @@ static void _printSymbolList(symbol_node head){
 }
 
 // 检查变量表中是否有相关数据，有则返回对应指针，没有返回 NULL
-static symbol_node _findRecord(symbol_node node){
+static symbol_node _findRecord(symbol_node head, symbol_node node){
     symbol_node p = head->next;
     while (p){
         if (!strcmp(p->name, node->name)){
@@ -105,18 +105,39 @@ static type _Specifier(Node root){
 // 对 StructSpecifier 进行分析
 static void _StructSpecifier(Node root){
     if (!strcmp(root->child[1]->name, "OptTag")){
-        _OptTag(root->child[1]);
+        _OptTag(root->child[1], _DefList(root->child[3]));
     } else if (!strcmp(root->child[1]->name, "Tag")){
         _Tag(root->child[1]);
     }
 }
 
+// 对 DefList 的处理
+static symbol_node _DefList(Node root){
+    // 获取 Def
+    symbol_node head_pointer = _createSymbolNode();
+    head_pointer->next = NULL;
+    while (1){
+        symbol_node temp = _createSymbolNode();
+        type t = _Specifier(root->child[0]->child[0]);
+        temp->symbolType = t;
+        temp->name = root->child[0]->child[1]->child[0]->child[0]->child[0]->ID_NAME;
+        // 头插法构建
+        temp->next = head_pointer->next;
+        head_pointer->next = temp;
+        root = root->child[1];
+        if (root->num_child == 0){
+            break;
+        }
+    }
+    return head_pointer;
+}
+
 // 对 OptTag 的处理
-static void _OptTag(Node root){
+static void _OptTag(Node root, symbol_node var){
     if (!strcmp(root->child[0]->name, "ID")){
         symbol_node temp = _createSymbolNode();
         temp->name = root->child[0]->ID_NAME;
-        temp->symbolType = _createType(STRUCTURE, 1, NULL);
+        temp->symbolType = _createType(STRUCTURE, 1, var);
         // 这里还没有写 structure 后面跟的属性值
         _addRecord(temp);
     } else{
@@ -172,7 +193,7 @@ static void _VarDec(Node root, type var_type){
         }
     }
     // 向记录表中进行添加
-    if (_findRecord(temp)){
+    if (_findRecord(head, temp)){
         fault = 1;
         printf("Error type 3 at Line %d: Redefined variable \"%s\".\n", root->line, temp->name);
     } else {
@@ -200,11 +221,11 @@ static type _Exp(Node root){
         // 所以要转换一下
         symbol_node s = _createSymbolNode();
         s->name = root->child[0]->ID_NAME;
-        if (!_findRecord(s)){
+        if (!_findRecord(head, s)){
             fault = 1;
             printf("Error type 1 at Line %d: Undefined variable \"%s\".\n", root->child[0]->line, root->child[0]->ID_NAME);
         } else {
-            return _findRecord(s)->symbolType;
+            return _findRecord(head, s)->symbolType;
         }
     } else if (!strcmp(root->child[0]->name, "Exp")){
         // 对数组元素展开分析
@@ -224,6 +245,17 @@ static type _Exp(Node root){
             if (t->kind != STRUCTURE){
                 fault = 1;
                 printf("Error type 13 at Line %d: \"%s\" is not a struct type, cannot be accessed using DOT notation.\n", root->child[0]->line, root->child[0]->child[0]->ID_NAME);
+            } else{
+                symbol_node temp = _createSymbolNode();
+                temp->name = root->child[0]->child[0]->ID_NAME;
+                // 获取结构体对应的节点
+                symbol_node stru = _findRecord(head, temp);
+                // 将 temp 改为目标 ID
+                temp->name = root->child[2]->ID_NAME;
+                if (!_findRecord(stru->symbolType->data.struct_pointer, temp)){
+                    fault = 1;
+                    printf("Error type 14 at Line %d: cannot access fields of an undefined struct.\n", root->child[1]->line);
+                }
             }
         } else if (!strcmp(root->child[1]->name, "ASSIGNOP")){
             // 先对不能为左值的数据进行审查
