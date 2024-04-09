@@ -57,6 +57,9 @@ gcc -Wall lex.yy.c tree.c syntax.tab.c main.c -o parser -ll
 ## 实验2: 语义分析
 实验 2 为在之前的基础上，实现一个语义分析器。与之前不同的是，实验二全部需要手写而不是借助其他工具完成。实验二具体要求在[此文件](./semantic_definition.md)中给出。
 
+目前已经完成的进度：
+![graph](./lab_2/graph/funcs.png)
+
 ### `semantic` 文件
 在 `semantic` 文件中，是对语法树进行语义分析。这里所有的内部调用的函数都是以 `_` 开头，并且为 `static` 函数，避免外部进行调用。同时，在 `semantic` 文件中仅向外面暴露一个 `semantic` 方法用于语义分析。在 `semantic` 文件中，对每个需要分析的非终结符都有对应的分析方法。在 `_semantic` 方法中，采用递归分析对输入的节点及他的所有儿子进行分析。
 
