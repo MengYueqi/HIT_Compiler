@@ -5,7 +5,7 @@
 
 void semantic(Node root);
 typedef struct _SymbolNode *symbol_node;
-typedef enum {BASIC, ARRAY, STRUCTURE} Kind;  // 三种类型数据
+typedef enum {BASIC, ARRAY, STRUCTURE, FUNCTION} Kind;  // 三种类型数据
 typedef enum {INT, FLOAT} basic_type;  // 基本类型
 typedef struct _Type *type;  // 类型指针
 

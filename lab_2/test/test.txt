@@ -2,7 +2,8 @@ struct s{
 	float i;
 	int k;
 };
+int test;
 int main()
 {
-s.j;
+test();
 }

@@ -216,16 +216,27 @@ static type _Exp(Node root){
     } else if (!strcmp(root->child[0]->name, "FLOAT")){
         return _createType(BASIC, 1, FLOAT);
     } else if (!strcmp(root->child[0]->name, "ID")){
-        // 对 ID 的分析
-        // 这里注意的是，变量表中的 node 和树中的 node 是不一样的类型
-        // 所以要转换一下
-        symbol_node s = _createSymbolNode();
-        s->name = root->child[0]->ID_NAME;
-        if (!_findRecord(head, s)){
-            fault = 1;
-            printf("Error type 1 at Line %d: Undefined variable \"%s\".\n", root->child[0]->line, root->child[0]->ID_NAME);
+        if (root->num_child == 1){
+            // 对 ID 的分析
+            // 这里注意的是，变量表中的 node 和树中的 node 是不一样的类型
+            // 所以要转换一下
+            symbol_node s = _createSymbolNode();
+            s->name = root->child[0]->ID_NAME;
+            if (!_findRecord(head, s)){
+                fault = 1;
+                printf("Error type 1 at Line %d: Undefined variable \"%s\".\n", root->child[0]->line, root->child[0]->ID_NAME);
+            } else {
+                return _findRecord(head, s)->symbolType;
+            }
         } else {
-            return _findRecord(head, s)->symbolType;
+            // 大于一个儿子，判断是函数调用
+            symbol_node s = _createSymbolNode();
+            s->name = root->child[0]->ID_NAME;
+            // 当调用的变量不是函数类型的时候，报错
+            if (_findRecord(head, s)->symbolType->kind != FUNCTION){
+                fault = 1;
+                printf("Error type 11 at Line %d: symbol \"%s\" is not a function and thus cannot be called as one.\n", root->child[0]->line, root->child[0]->ID_NAME);
+            }
         }
     } else if (!strcmp(root->child[0]->name, "Exp")){
         // 对数组元素展开分析
