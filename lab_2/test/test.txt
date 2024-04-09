@@ -1,6 +1,9 @@
 float k;
+struct s{
+	float i;
+};
 int main()
 {
 	float c = 1.1;
-	c = k;
+	c = i.k;
 }

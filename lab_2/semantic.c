@@ -70,15 +70,20 @@ static type _createType(Kind kind, int num, ...){
     t->kind = kind;
     va_list tlist;
     va_start(tlist, num);
-    switch(kind)
-    {
+    switch(kind){
+        // 处理 BASIC
         case BASIC:
             t->data.basic = va_arg(tlist, basic_type);
             break;
+        // 处理 ARRAY
         case ARRAY:
             t->data.arr.size = va_arg(tlist, int);
             t->data.arr.arr_type = va_arg(tlist, type);
             break;
+        // 处理 STRUCTURE
+        case STRUCTURE:
+           t->data.struct_pointer = va_arg(tlist, symbol_node);
+           break;
     }
     va_end(tlist);
     return t;
@@ -92,8 +97,40 @@ static type _Specifier(Node root){
         } else if (!strcmp(root->child[0]->ID_NAME, "float")){
             return _createType(BASIC, 1, FLOAT);
         }
+    } else if(!strcmp(root->child[0]->name, "StructSpecifier")) {
+        _StructSpecifier(root->child[0]);
     }
-    return NULL;
+}
+
+// 对 StructSpecifier 进行分析
+static void _StructSpecifier(Node root){
+    if (!strcmp(root->child[1]->name, "OptTag")){
+        _OptTag(root->child[1]);
+    } else if (!strcmp(root->child[1]->name, "Tag")){
+        _Tag(root->child[1]);
+    }
+}
+
+// 对 OptTag 的处理
+static void _OptTag(Node root){
+    if (!strcmp(root->child[0]->name, "ID")){
+        symbol_node temp = _createSymbolNode();
+        temp->name = root->child[0]->ID_NAME;
+        temp->symbolType = _createType(STRUCTURE, 1, NULL);
+        // 这里还没有写 structure 后面跟的属性值
+        _addRecord(temp);
+    } else{
+        return;
+    }
+}
+
+// 对 Tag 的处理
+static void _Tag(Node root){
+    symbol_node temp = _createSymbolNode();
+    temp->name = root->child[0]->ID_NAME;
+    temp->symbolType = _createType(STRUCTURE, 1, NULL);
+    // 这里还没有写 structure 后面跟的属性值
+    _addRecord(temp);
 }
 
 // 对 DecList 的分析
@@ -182,7 +219,12 @@ static type _Exp(Node root){
                 printf("Error type 12 at Line %d: \"%s\" is not an integer.\n", root->child[0]->line, root->child[2]->child[0]->ID_NAME);
             }
         } else if (!strcmp(root->child[1]->name, "DOT")){
-
+            // 对非结构体变量使用 '.' 进行审查
+            type t = _Exp(root->child[0]);
+            if (t->kind != STRUCTURE){
+                fault = 1;
+                printf("Error type 13 at Line %d: \"%s\" is not a struct type, cannot be accessed using DOT notation.\n", root->child[0]->line, root->child[0]->child[0]->ID_NAME);
+            }
         } else if (!strcmp(root->child[1]->name, "ASSIGNOP")){
             // 先对不能为左值的数据进行审查
             if (!strcmp(root->child[0]->child[0]->name, "INT") || !strcmp(root->child[0]->child[0]->name, "FLOAT")){
@@ -213,6 +255,7 @@ static type _Exp(Node root){
 void semantic(Node root){
     _initSymbolList();
     _semantic(root);
+    // _printSymbolList(head);
 }
 
 // 语义分析函数
