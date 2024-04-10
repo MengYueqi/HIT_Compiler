@@ -66,6 +66,13 @@ static void _FuncDec(Node root, type return_type){
     symbol_node temp = _createSymbolNode();
     temp->name = root->child[0]->ID_NAME;
     temp->symbolType = _createType(FUNCTION, 2, return_type, NULL);
+    if (_findRecord(head, temp)){
+        // 这里用的是所有符号的查找，即只要有相同的符号就不能进行命名
+        // 也可以允许和非函数的变量同名，这样需要再写一个函数
+        // 不想写了，啊啊啊啊啊
+        fault = 1;
+        printf("Error type 4 at Line %d: The function name \"%s\" is duplicated.\n", root->child[0]->line, root->child[0]->ID_NAME);
+    }
     _addRecord(temp);
 }
 
