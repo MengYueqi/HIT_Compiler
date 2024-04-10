@@ -54,6 +54,18 @@ static void _addRecord(symbol_node sym_record){
 static void _ExtDef(Node root){
     // 对全局定义的符号的分析
     type t = _Specifier(root->child[0]);
+    // 如果是结构体类型，特别对待一下
+    if (t->kind == STRUCTURE){
+        symbol_node temp = _createSymbolNode();
+        temp->name = root->child[0]->name;
+        // 这里要判断是不是结构体初次定义，如果是的话不能报错
+        // 这里直接判断前面有没有相关结构体定义，儿子数不是 5 说明不是定义的结构体
+        if (!_findRecord(head, temp) && root->child[0]->child[0]->num_child != 5){
+            fault = 1;
+            printf("Error type 17 at Line %d: variables \"%s\" cannot be defined using undefined structs.\n", root->child[0]->line, root->child[1]->child[0]->child[0]->child[0]->ID_NAME);
+            return;
+        }
+    }
     if (!strcmp(root->child[1]->name, "ExtDecList")){
         _ExtDefList(root->child[1], t);
     } else if (!strcmp(root->child[1]->name, "FunDec")){
@@ -120,6 +132,7 @@ static type _Specifier(Node root){
         }
     } else if(!strcmp(root->child[0]->name, "StructSpecifier")) {
         _StructSpecifier(root->child[0]);
+        return _createType(STRUCTURE, 1, NULL);
     }
 }
 

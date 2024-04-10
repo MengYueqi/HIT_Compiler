@@ -2,6 +2,7 @@ struct s{
 	float i;
 	int k;
 };
+struct d arr[10];
 int test(){
 
 }
