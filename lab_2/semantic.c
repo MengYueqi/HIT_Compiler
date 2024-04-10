@@ -56,7 +56,17 @@ static void _ExtDef(Node root){
     type t = _Specifier(root->child[0]);
     if (!strcmp(root->child[1]->name, "ExtDecList")){
         _ExtDefList(root->child[1], t);
+    } else if (!strcmp(root->child[1]->name, "FunDec")){
+        _FuncDec(root->child[1], t);
     }
+}
+
+// 对 FunDec 的分析
+static void _FuncDec(Node root, type return_type){
+    symbol_node temp = _createSymbolNode();
+    temp->name = root->child[0]->ID_NAME;
+    temp->symbolType = _createType(FUNCTION, 2, return_type, NULL);
+    _addRecord(temp);
 }
 
 // 对 ExtDecList 进行分析
@@ -84,6 +94,10 @@ static type _createType(Kind kind, int num, ...){
         case STRUCTURE:
            t->data.struct_pointer = va_arg(tlist, symbol_node);
            break;
+        // 对函数进行创建，第一个量为返回值，第二个量为参数值
+        case FUNCTION:
+            t->data.func_type.return_type = va_arg(tlist, type);
+            t->data.func_type.par_type = va_arg(tlist, symbol_node);
     }
     va_end(tlist);
     return t;
@@ -138,6 +152,11 @@ static void _OptTag(Node root, symbol_node var){
         symbol_node temp = _createSymbolNode();
         temp->name = root->child[0]->ID_NAME;
         temp->symbolType = _createType(STRUCTURE, 1, var);
+        if (_findRecord(head, temp)){
+            fault = 1;
+            printf("Error type 16 at Line %d: The struct \"%s\" has been previously defined and cannot be redefined.\n", root->child[0]->line, root->child[0]->ID_NAME);
+            return;
+        }
         // 这里还没有写 structure 后面跟的属性值
         _addRecord(temp);
     } else{
@@ -232,10 +251,15 @@ static type _Exp(Node root){
             // 大于一个儿子，判断是函数调用
             symbol_node s = _createSymbolNode();
             s->name = root->child[0]->ID_NAME;
-            // 当调用的变量不是函数类型的时候，报错
-            if (_findRecord(head, s)->symbolType->kind != FUNCTION){
+            if (!_findRecord(head, s)){
+                // 当调用一个函数没有定义的时候，报错
+                printf("Error type 2 at Line %d: \"%s\" is undefined and cannot be invoked.\n", root->child[0]->line, root->child[0]->ID_NAME);
+            } else if (_findRecord(head, s)->symbolType->kind != FUNCTION){
+                // 当调用的变量不是函数类型的时候，报错
                 fault = 1;
                 printf("Error type 11 at Line %d: symbol \"%s\" is not a function and thus cannot be called as one.\n", root->child[0]->line, root->child[0]->ID_NAME);
+            } else{
+
             }
         }
     } else if (!strcmp(root->child[0]->name, "Exp")){

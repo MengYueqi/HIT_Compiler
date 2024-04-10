@@ -2,7 +2,13 @@ struct s{
 	float i;
 	int k;
 };
-int test;
+int iss;
+struct iss{
+	float j;
+};
+int test(){
+
+}
 int main()
 {
 test();

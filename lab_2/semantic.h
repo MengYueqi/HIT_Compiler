@@ -19,6 +19,8 @@ struct _Type{
         struct {type arr_type; int size;} arr;
         // 结构体类型
         symbol_node struct_pointer;
+        // 函数类型，包含返回类型喝参数类型
+        struct{type return_type; symbol_node par_type}func_type;
     }data;
 };
 
@@ -49,5 +51,6 @@ static void _OptTag(Node root, symbol_node var);
 static symbol_node _findRecord(symbol_node head, symbol_node node);
 static void _Tag(Node root);
 static void _ExtDefList(Node root, type var_type);
+static void _FuncDec(Node root, type return_type);
 
 #endif
