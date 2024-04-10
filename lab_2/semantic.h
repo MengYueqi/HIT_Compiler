@@ -24,7 +24,7 @@ struct _Type{
     }data;
 };
 
-// 变量单元指针
+// 变量单元
 struct _SymbolNode{
     char *name;
     type symbolType;
