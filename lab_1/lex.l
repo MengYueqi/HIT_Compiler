@@ -41,7 +41,27 @@ digit [0-9]
 "while"  {yylval.node = newNode("WHILE", 0, yylineno, NULL); return WHILE;}
 "int"|"float" {yylval.node = newNode("TYPE", 0, yylineno, NULL); return TYPE;}
 [a-zA-Z_][a-zA-Z0-9_]* {yylval.node = newNode("ID", 0, yylineno, NULL); return ID;}
-.               {printf("Error type A at Line %d: Mysterious character \"%s\".\n", yylineno, yytext); fault = 1;}
+"//".* {}
+"/*"  {char c;
+            int q = 0;
+            while(1){
+                if(q == 0){
+                    c = input();
+                    if(c == EOF)
+                        break;
+                    if(c == '*')
+                        q = 1;
+                }else{
+                    c = input();
+                    if(c == EOF)
+                    break;
+                    if(c == '/')
+                        break;
+                    else if(c != '*')
+                        q = 0;
+                }
+            } }
+.  {printf("Error type A at Line %d: Mysterious character \"%s\".\n", yylineno, yytext); fault = 1;}
 
 %%
 

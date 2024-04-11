@@ -72,6 +72,7 @@ Stmt : Exp SEMI {Node child[2] = {$1, $2}; $$ = newNode("Stmt", 2, yylineno, chi
     | IF LP Exp RP Stmt {Node child[5] = {$1, $2, $3, $4, $5}; $$ = newNode("Stmt", 5, yylineno, child);}
     | IF LP Exp RP Stmt ELSE Stmt {Node child[7] = {$1, $2, $3, $4, $5, $6, $7}; $$ = newNode("Stmt", 7, yylineno, child);}
     | WHILE LP Exp RP Stmt {Node child[5] = {$1, $2, $3, $4, $5}; $$ = newNode("Stmt", 5, yylineno, child);}
+    | error SEMI 					{ }
     ;
 
 // Local Definitions
