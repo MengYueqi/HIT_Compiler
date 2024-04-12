@@ -165,7 +165,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 7 "syntax.y"
+#line 6 "syntax.y"
 {
     Node node;
 }
@@ -493,13 +493,13 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    24,    24,    26,    27,    29,    30,    31,    33,    34,
-      38,    39,    41,    42,    44,    45,    47,    51,    52,    54,
-      55,    57,    58,    60,    64,    66,    67,    69,    70,    71,
-      72,    73,    74,    75,    79,    80,    82,    84,    85,    87,
-      88,    92,    93,    94,    95,    96,    97,    98,    99,   100,
-     101,   102,   103,   104,   105,   106,   107,   108,   109,   112,
-     113
+       0,    23,    23,    25,    26,    28,    29,    30,    32,    33,
+      37,    38,    40,    41,    43,    44,    46,    50,    51,    53,
+      54,    56,    57,    59,    63,    65,    66,    68,    69,    70,
+      71,    72,    73,    74,    78,    79,    81,    83,    84,    86,
+      87,    91,    92,    93,    94,    95,    96,    97,    98,    99,
+     100,   101,   102,   103,   104,   105,   106,   107,   108,   111,
+     112
 };
 #endif
 
@@ -1498,297 +1498,297 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 24 "syntax.y"
+#line 23 "syntax.y"
     {Node child[1] = {(yyvsp[(1) - (1)].node)}; (yyval.node) = newNode("Program", 1, yylineno, child); root = (yyval.node);;}
     break;
 
   case 3:
-#line 26 "syntax.y"
+#line 25 "syntax.y"
     {Node child[2] = {(yyvsp[(1) - (2)].node), (yyvsp[(2) - (2)].node)}; (yyval.node) = newNode("ExtDefList", 2, yylineno, child);;}
     break;
 
   case 4:
-#line 27 "syntax.y"
+#line 26 "syntax.y"
     {(yyval.node) = newNode("ExtDefList", 0, -1, NULL);;}
     break;
 
   case 5:
-#line 29 "syntax.y"
+#line 28 "syntax.y"
     {Node child[3] = {(yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), (yyvsp[(3) - (3)].node)}; (yyval.node)= newNode("ExtDef", 3, yylineno, child);;}
     break;
 
   case 6:
-#line 30 "syntax.y"
+#line 29 "syntax.y"
     {Node child[2] = {(yyvsp[(1) - (2)].node), (yyvsp[(2) - (2)].node)}; (yyval.node)= newNode("ExtDef", 2, yylineno, child);;}
     break;
 
   case 7:
-#line 31 "syntax.y"
+#line 30 "syntax.y"
     {Node child[3] = {(yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), (yyvsp[(3) - (3)].node)}; (yyval.node)= newNode("ExtDef", 3, yylineno, child);;}
     break;
 
   case 8:
-#line 33 "syntax.y"
+#line 32 "syntax.y"
     {Node child[1] = {(yyvsp[(1) - (1)].node)}; (yyval.node) = newNode("ExtDecList", 1, yylineno, child);;}
     break;
 
   case 9:
-#line 34 "syntax.y"
+#line 33 "syntax.y"
     {Node child[3] = {(yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), (yyvsp[(3) - (3)].node)}; (yyval.node) = newNode("ExtDecList", 3, yylineno, child);;}
     break;
 
   case 10:
-#line 38 "syntax.y"
+#line 37 "syntax.y"
     {Node child[1] = {(yyvsp[(1) - (1)].node)}; (yyval.node) = newNode("Specifier", 1, yylineno, child);;}
     break;
 
   case 11:
-#line 39 "syntax.y"
+#line 38 "syntax.y"
     {Node child[1] = {(yyvsp[(1) - (1)].node)}; (yyval.node) = newNode("Specifier", 1, yylineno, child);;}
     break;
 
   case 12:
-#line 41 "syntax.y"
+#line 40 "syntax.y"
     {Node child[5] = {(yyvsp[(1) - (5)].node), (yyvsp[(2) - (5)].node), (yyvsp[(3) - (5)].node), (yyvsp[(4) - (5)].node), (yyvsp[(5) - (5)].node)}; (yyval.node) = newNode("StructSpecifier", 5, yylineno, child);;}
     break;
 
   case 13:
-#line 42 "syntax.y"
+#line 41 "syntax.y"
     {Node child[2] = {(yyvsp[(1) - (2)].node), (yyvsp[(2) - (2)].node)}; (yyval.node) = newNode("StructSpecifier", 2, yylineno, child);;}
     break;
 
   case 14:
-#line 44 "syntax.y"
+#line 43 "syntax.y"
     {Node child[1] = {(yyvsp[(1) - (1)].node)}; (yyval.node) = newNode("OptTag", 1, yylineno, child);;}
     break;
 
   case 15:
-#line 45 "syntax.y"
+#line 44 "syntax.y"
     {(yyval.node) = newNode("OptTag", 0, -1, NULL);;}
     break;
 
   case 16:
-#line 47 "syntax.y"
+#line 46 "syntax.y"
     {Node child[1] = {(yyvsp[(1) - (1)].node)}; (yyval.node) = newNode("Tag", 1, yylineno, child);;}
     break;
 
   case 17:
-#line 51 "syntax.y"
+#line 50 "syntax.y"
     {Node child[1] = {(yyvsp[(1) - (1)].node)}; (yyval.node) = newNode("VarDec", 1, yylineno, child);;}
     break;
 
   case 18:
-#line 52 "syntax.y"
+#line 51 "syntax.y"
     {Node child[4] = {(yyvsp[(1) - (4)].node), (yyvsp[(2) - (4)].node), (yyvsp[(3) - (4)].node), (yyvsp[(4) - (4)].node)}; (yyval.node) = newNode("VarDec", 4, yylineno, child);;}
     break;
 
   case 19:
-#line 54 "syntax.y"
+#line 53 "syntax.y"
     {Node child[4] = {(yyvsp[(1) - (4)].node), (yyvsp[(2) - (4)].node), (yyvsp[(3) - (4)].node), (yyvsp[(4) - (4)].node)}; (yyval.node) = newNode("FunDec", 4, yylineno, child);;}
     break;
 
   case 20:
-#line 55 "syntax.y"
+#line 54 "syntax.y"
     {Node child[3] = {(yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), (yyvsp[(3) - (3)].node)}; (yyval.node) = newNode("FunDec", 3, yylineno, child);;}
     break;
 
   case 21:
-#line 57 "syntax.y"
+#line 56 "syntax.y"
     {Node child[3] = {(yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), (yyvsp[(3) - (3)].node)}; (yyval.node) = newNode("VarList", 3, yylineno, child);;}
     break;
 
   case 22:
-#line 58 "syntax.y"
+#line 57 "syntax.y"
     {Node child[1] = {(yyvsp[(1) - (1)].node)}; (yyval.node) = newNode("VarList", 1, yylineno, child);;}
     break;
 
   case 23:
-#line 60 "syntax.y"
+#line 59 "syntax.y"
     {Node child[2] = {(yyvsp[(1) - (2)].node), (yyvsp[(2) - (2)].node)}; (yyval.node) = newNode("ParamDec", 2, yylineno, child);;}
     break;
 
   case 24:
-#line 64 "syntax.y"
+#line 63 "syntax.y"
     {Node child[4] = {(yyvsp[(1) - (4)].node), (yyvsp[(2) - (4)].node), (yyvsp[(3) - (4)].node), (yyvsp[(4) - (4)].node)}; (yyval.node) = newNode("CompSt", 4, yylineno, child);;}
     break;
 
   case 25:
-#line 66 "syntax.y"
+#line 65 "syntax.y"
     {Node child[2] = {(yyvsp[(1) - (2)].node), (yyvsp[(2) - (2)].node)}; (yyval.node) = newNode("StmtList", 2, yylineno, child);;}
     break;
 
   case 26:
-#line 67 "syntax.y"
+#line 66 "syntax.y"
     {(yyval.node) = newNode("StmtList", 0, -1, NULL);;}
     break;
 
   case 27:
-#line 69 "syntax.y"
+#line 68 "syntax.y"
     {Node child[2] = {(yyvsp[(1) - (2)].node), (yyvsp[(2) - (2)].node)}; (yyval.node) = newNode("Stmt", 2, yylineno, child);;}
     break;
 
   case 28:
-#line 70 "syntax.y"
+#line 69 "syntax.y"
     {Node child[1] = {(yyvsp[(1) - (1)].node)}; (yyval.node) = newNode("Stmt", 1, yylineno, child);;}
     break;
 
   case 29:
-#line 71 "syntax.y"
+#line 70 "syntax.y"
     {Node child[3] = {(yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), (yyvsp[(3) - (3)].node)}; (yyval.node) = newNode("Stmt", 3, yylineno, child);;}
     break;
 
   case 30:
-#line 72 "syntax.y"
+#line 71 "syntax.y"
     {Node child[5] = {(yyvsp[(1) - (5)].node), (yyvsp[(2) - (5)].node), (yyvsp[(3) - (5)].node), (yyvsp[(4) - (5)].node), (yyvsp[(5) - (5)].node)}; (yyval.node) = newNode("Stmt", 5, yylineno, child);;}
     break;
 
   case 31:
-#line 73 "syntax.y"
+#line 72 "syntax.y"
     {Node child[7] = {(yyvsp[(1) - (7)].node), (yyvsp[(2) - (7)].node), (yyvsp[(3) - (7)].node), (yyvsp[(4) - (7)].node), (yyvsp[(5) - (7)].node), (yyvsp[(6) - (7)].node), (yyvsp[(7) - (7)].node)}; (yyval.node) = newNode("Stmt", 7, yylineno, child);;}
     break;
 
   case 32:
-#line 74 "syntax.y"
+#line 73 "syntax.y"
     {Node child[5] = {(yyvsp[(1) - (5)].node), (yyvsp[(2) - (5)].node), (yyvsp[(3) - (5)].node), (yyvsp[(4) - (5)].node), (yyvsp[(5) - (5)].node)}; (yyval.node) = newNode("Stmt", 5, yylineno, child);;}
     break;
 
   case 33:
-#line 75 "syntax.y"
+#line 74 "syntax.y"
     { ;}
     break;
 
   case 34:
-#line 79 "syntax.y"
+#line 78 "syntax.y"
     {Node child[2] = {(yyvsp[(1) - (2)].node), (yyvsp[(2) - (2)].node)}; (yyval.node) = newNode("DefList", 2, yylineno, child);;}
     break;
 
   case 35:
-#line 80 "syntax.y"
+#line 79 "syntax.y"
     {(yyval.node) = newNode("DefList", 0, -1, NULL);;}
     break;
 
   case 36:
-#line 82 "syntax.y"
+#line 81 "syntax.y"
     {Node child[3] = {(yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), (yyvsp[(3) - (3)].node)}; (yyval.node) = newNode("Def", 3, yylineno, child);;}
     break;
 
   case 37:
-#line 84 "syntax.y"
+#line 83 "syntax.y"
     {Node child[1] = {(yyvsp[(1) - (1)].node)}; (yyval.node) = newNode("DecList", 1, yylineno, child);;}
     break;
 
   case 38:
-#line 85 "syntax.y"
+#line 84 "syntax.y"
     {Node child[3] = {(yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), (yyvsp[(3) - (3)].node)}; (yyval.node) = newNode("DecList", 3, yylineno, child);;}
     break;
 
   case 39:
-#line 87 "syntax.y"
+#line 86 "syntax.y"
     {Node child[1] = {(yyvsp[(1) - (1)].node)}; (yyval.node) = newNode("Dec", 1, yylineno, child);;}
     break;
 
   case 40:
-#line 88 "syntax.y"
+#line 87 "syntax.y"
     {Node child[3] = {(yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), (yyvsp[(3) - (3)].node)}; (yyval.node) = newNode("Dec", 3, yylineno, child);;}
     break;
 
   case 41:
-#line 92 "syntax.y"
+#line 91 "syntax.y"
     {Node child[3] = {(yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), (yyvsp[(3) - (3)].node)}; (yyval.node) = newNode("Exp", 3, yylineno, child);;}
     break;
 
   case 42:
-#line 93 "syntax.y"
+#line 92 "syntax.y"
     {Node child[3] = {(yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), (yyvsp[(3) - (3)].node)}; (yyval.node) = newNode("Exp", 3, yylineno, child);;}
     break;
 
   case 43:
-#line 94 "syntax.y"
+#line 93 "syntax.y"
     {Node child[3] = {(yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), (yyvsp[(3) - (3)].node)}; (yyval.node) = newNode("Exp", 3, yylineno, child);;}
     break;
 
   case 44:
-#line 95 "syntax.y"
+#line 94 "syntax.y"
     {Node child[3] = {(yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), (yyvsp[(3) - (3)].node)}; (yyval.node) = newNode("Exp", 3, yylineno, child);;}
     break;
 
   case 45:
-#line 96 "syntax.y"
+#line 95 "syntax.y"
     {Node child[3] = {(yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), (yyvsp[(3) - (3)].node)}; (yyval.node) = newNode("Exp", 3, yylineno, child);;}
     break;
 
   case 46:
-#line 97 "syntax.y"
+#line 96 "syntax.y"
     {Node child[3] = {(yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), (yyvsp[(3) - (3)].node)}; (yyval.node) = newNode("Exp", 3, yylineno, child);;}
     break;
 
   case 47:
-#line 98 "syntax.y"
+#line 97 "syntax.y"
     {Node child[3] = {(yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), (yyvsp[(3) - (3)].node)}; (yyval.node) = newNode("Exp", 3, yylineno, child);;}
     break;
 
   case 48:
-#line 99 "syntax.y"
+#line 98 "syntax.y"
     {Node child[3] = {(yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), (yyvsp[(3) - (3)].node)}; (yyval.node) = newNode("Exp", 3, yylineno, child);;}
     break;
 
   case 49:
-#line 100 "syntax.y"
+#line 99 "syntax.y"
     {Node child[3] = {(yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), (yyvsp[(3) - (3)].node)}; (yyval.node) = newNode("Exp", 3, yylineno, child);;}
     break;
 
   case 50:
-#line 101 "syntax.y"
+#line 100 "syntax.y"
     {Node child[2] = {(yyvsp[(1) - (2)].node), (yyvsp[(2) - (2)].node)}; (yyval.node) = newNode("Exp", 2, yylineno, child);;}
     break;
 
   case 51:
-#line 102 "syntax.y"
+#line 101 "syntax.y"
     {Node child[2] = {(yyvsp[(1) - (2)].node), (yyvsp[(2) - (2)].node)}; (yyval.node) = newNode("Exp", 2, yylineno, child);;}
     break;
 
   case 52:
-#line 103 "syntax.y"
+#line 102 "syntax.y"
     {Node child[4] = {(yyvsp[(1) - (4)].node), (yyvsp[(2) - (4)].node), (yyvsp[(3) - (4)].node), (yyvsp[(4) - (4)].node)}; (yyval.node) = newNode("Exp", 4, yylineno, child);;}
     break;
 
   case 53:
-#line 104 "syntax.y"
+#line 103 "syntax.y"
     {Node child[3] = {(yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), (yyvsp[(3) - (3)].node)}; (yyval.node) = newNode("Exp", 3, yylineno, child);;}
     break;
 
   case 54:
-#line 105 "syntax.y"
+#line 104 "syntax.y"
     {Node child[4] = {(yyvsp[(1) - (4)].node), (yyvsp[(2) - (4)].node), (yyvsp[(3) - (4)].node), (yyvsp[(4) - (4)].node)}; (yyval.node) = newNode("Exp", 4, yylineno, child);;}
     break;
 
   case 55:
-#line 106 "syntax.y"
+#line 105 "syntax.y"
     {Node child[3] = {(yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), (yyvsp[(3) - (3)].node)}; (yyval.node) = newNode("Exp", 3, yylineno, child);;}
     break;
 
   case 56:
-#line 107 "syntax.y"
+#line 106 "syntax.y"
     {Node child[1] = {(yyvsp[(1) - (1)].node)}; (yyval.node) = newNode("Exp", 1, yylineno, child);;}
     break;
 
   case 57:
-#line 108 "syntax.y"
+#line 107 "syntax.y"
     {Node child[1] = {(yyvsp[(1) - (1)].node)}; (yyval.node) = newNode("Exp", 1, yylineno, child);;}
     break;
 
   case 58:
-#line 109 "syntax.y"
+#line 108 "syntax.y"
     {Node child[1] = {(yyvsp[(1) - (1)].node)}; (yyval.node) = newNode("Exp", 1, yylineno, child);;}
     break;
 
   case 59:
-#line 112 "syntax.y"
+#line 111 "syntax.y"
     {Node child[3] = {(yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), (yyvsp[(3) - (3)].node)}; (yyval.node) = newNode("Args", 3, yylineno, child);;}
     break;
 
   case 60:
-#line 113 "syntax.y"
+#line 112 "syntax.y"
     {Node child[1] = {(yyvsp[(1) - (1)].node)}; (yyval.node) = newNode("Args", 1, yylineno, child);;}
     break;
 
@@ -2008,7 +2008,7 @@ yyreturn:
 }
 
 
-#line 115 "syntax.y"
+#line 114 "syntax.y"
 
 
 

@@ -3,7 +3,6 @@
 # include <stdlib.h>
 # include "parser.h"
 %}
-
 %union{
     Node node;
 }

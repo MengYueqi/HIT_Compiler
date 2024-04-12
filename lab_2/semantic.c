@@ -55,6 +55,7 @@ static void _ExtDef(Node root){
     // 对全局定义的符号的分析
     type t = _Specifier(root->child[0]);
     // 如果是结构体类型，特别对待一下
+    // 结构体就单独处理了，不把它和其他混在一起，要不结构体内的变量也被添加到变量表里
     if (t->kind == STRUCTURE){
         symbol_node temp = _createSymbolNode();
         temp->name = root->child[0]->name;
@@ -65,8 +66,7 @@ static void _ExtDef(Node root){
             printf("Error type 17 at Line %d: variables \"%s\" cannot be defined using undefined structs.\n", root->child[0]->line, root->child[1]->child[0]->child[0]->child[0]->ID_NAME);
             return;
         }
-    }
-    if (!strcmp(root->child[1]->name, "ExtDecList")){
+    } else if (!strcmp(root->child[1]->name, "ExtDecList")){
         _ExtDefList(root->child[1], t);
     } else if (!strcmp(root->child[1]->name, "FunDec")){
         _FuncDec(root->child[1], t);
@@ -139,11 +139,44 @@ static type _Specifier(Node root){
 // 对 StructSpecifier 进行分析
 static void _StructSpecifier(Node root){
     if (!strcmp(root->child[1]->name, "OptTag")){
-        _OptTag(root->child[1], _DefList(root->child[3]));
+        symbol_node temp_head = _DefList(root->child[3]);
+        if (_hasDuplicateName(temp_head)){
+            fault = 1;
+            printf("Error type 15 at Line %d: struct \"%s\" contains duplicate internal variable definitions.\n", root->child[0]->line, root->child[1]->child[0]->ID_NAME);
+            return;
+        } else {
+            _OptTag(root->child[1], temp_head);
+        }
     } else if (!strcmp(root->child[1]->name, "Tag")){
         _Tag(root->child[1]);
     }
 }
+
+// 判断是否有相同的数据
+static int _hasDuplicateName(symbol_node head){
+    if (head == NULL || head->next == NULL){
+        // 如果链表为空或者只有一个节点，则不可能存在重复名称的节点
+        return 0;
+    }
+    symbol_node current = head->next;
+    // 遍历链表
+    while (current != NULL) {
+        symbol_node runner = current->next;
+        // 在当前节点之后查找是否有相同名称的节点
+        while (runner != NULL) {
+            // 如果找到相同名称的节点，则返回 true
+            if (!strcmp(current->name, runner->name)) {
+                return 1;
+            }
+            runner = runner->next;
+        }
+        // 移动到链表的下一个节点
+        current = current->next;
+    }
+    // 如果没有找到相同名称的节点，则返回 false
+    return 0;
+}
+
 
 // 对 DefList 的处理
 static symbol_node _DefList(Node root){
@@ -154,6 +187,12 @@ static symbol_node _DefList(Node root){
         symbol_node temp = _createSymbolNode();
         type t = _Specifier(root->child[0]->child[0]);
         temp->symbolType = t;
+        // 如果出现结构体内就初始化的，报错
+        if(root->child[0]->child[1]->child[0]->num_child != 1){
+            fault = 1;
+            printf("Error type 16 at Line %d: The struct \"%s\" contains initialized internal variable definitions.\n", root->child[0]->line, root->child[0]->child[1]->child[0]->child[0]->child[0]->ID_NAME);
+            return NULL;
+        }
         temp->name = root->child[0]->child[1]->child[0]->child[0]->child[0]->ID_NAME;
         // 头插法构建
         temp->next = head_pointer->next;
@@ -173,11 +212,13 @@ static void _OptTag(Node root, symbol_node var){
         temp->name = root->child[0]->ID_NAME;
         temp->symbolType = _createType(STRUCTURE, 1, var);
         if (_findRecord(head, temp)){
+            // 对结构体重复定义进行审查
             fault = 1;
             printf("Error type 16 at Line %d: The struct \"%s\" has been previously defined and cannot be redefined.\n", root->child[0]->line, root->child[0]->ID_NAME);
             return;
         }
         // 这里还没有写 structure 后面跟的属性值
+        temp->symbolType->data.struct_pointer = var;
         _addRecord(temp);
     } else{
         return;
@@ -353,8 +394,9 @@ static void _semantic(Node root){
     // 根据不同的产生式部分进行分析 
     if (!strcmp(root->name, "ExtDef")){
         _ExtDef(root);
-    } else if (!strcmp(root->name, "Def")){
-        _Def(root);
+    // 这里从 CompSt 开始调用，防止将结构体中的局部变量也添加到变量表中
+    } else if (!strcmp(root->name, "CompSt") && (root->child[1]->num_child == 2)){
+        _Def(root->child[1]->child[0]);
     } else if (!strcmp(root->name, "Exp")){
         _Exp(root); 
     }

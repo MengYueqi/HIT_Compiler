@@ -1,8 +1,7 @@
 struct s{
-	float i;
+	float i = 1;
 	int k;
 };
-struct d arr[10];
 int test(){
 
 }

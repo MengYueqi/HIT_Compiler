@@ -112,7 +112,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 7 "syntax.y"
+#line 6 "syntax.y"
 {
     Node node;
 }
