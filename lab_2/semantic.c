@@ -70,6 +70,52 @@ static void _ExtDef(Node root){
         _ExtDefList(root->child[1], t);
     } else if (!strcmp(root->child[1]->name, "FunDec")){
         _FuncDec(root->child[1], t);
+        type return_type = _Specifier(root->child[0]);
+        // 判断是空函数，然后提前避免一下
+        // 我真的不知道后面要是空函数送到里面判断为什么会出现段错误，呜呜
+        // 会的同学帮一帮
+        if (root->child[2]->child[2]->num_child != 2){
+            if (return_type){
+                printf("Error type 8 at Line %d: The function's return value does not match its definition.\n", root->child[1]->line);
+                return;
+            }
+        } else {
+            type real_return_type = _CompSt(root->child[2]);
+            // 这里有一个空函数引发的奇怪 bug 注意一下
+            if (!real_return_type){
+                // 这个地方可能会查出来 NULL，所以一定要看一下是否为空指针，不然很麻烦
+                return;
+            } else if (return_type->kind == BASIC){
+                if (real_return_type->kind != BASIC || real_return_type->data.basic != return_type->data.basic){
+                    printf("Error type 8 at Line %d: The function's return value does not match its definition.\n", root->child[1]->line);
+                }
+            } else if (return_type->kind != real_return_type->kind){
+                // 啊这个地方写的不是很严谨
+                // 都是数组可能会被抹过去，有时间会再完善一下
+                printf("Error type 8 at Line %d: The function's return value does not match its definition.\n", root->child[1]->line);
+            }
+        }
+    }
+}
+
+// 对 CompSt 的分析
+static type _CompSt(Node root){
+    return _StmtList(root->child[2]);
+}
+
+// 对 StmtList 的分析
+static type _StmtList(Node root){
+    while (1){
+        // 获取最后一条语句
+        if (root->child[1]->num_child != 2){
+            // 将 root 更新到 Stmt，即最后一条语句
+            if (root->child[0]->num_child == 3 && _Exp(root->child[0]->child[1])){
+                return _Exp(root->child[0]->child[1]);
+            } else{
+                return NULL;
+            }
+        }
+        root = root->child[1];
     }
 }
 
@@ -305,6 +351,7 @@ static type _Exp(Node root){
             if (!_findRecord(head, s)){
                 fault = 1;
                 printf("Error type 1 at Line %d: Undefined variable \"%s\".\n", root->child[0]->line, root->child[0]->ID_NAME);
+                return NULL;
             } else {
                 return _findRecord(head, s)->symbolType;
             }
@@ -320,7 +367,8 @@ static type _Exp(Node root){
                 fault = 1;
                 printf("Error type 11 at Line %d: symbol \"%s\" is not a function and thus cannot be called as one.\n", root->child[0]->line, root->child[0]->ID_NAME);
             } else{
-
+                // TODO:这个地方应该输入是 symbol_node，但现在查出来的是 Type，之后改一下
+                // _Args(root->child[2], _Exp(root->child[0]));
             }
         }
     } else if (!strcmp(root->child[0]->name, "Exp")){
@@ -377,6 +425,14 @@ static type _Exp(Node root){
             }
         }
     }
+}
+
+// 对 Args 的分析
+static void _Args(Node root, symbol_node func_symbol){
+    // type type_temp = func_symbol->symbolType;
+    // while (type_temp){
+    // }
+    
 }
 
 // 向外暴露的语义分析器

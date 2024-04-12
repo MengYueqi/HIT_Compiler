@@ -53,5 +53,8 @@ static void _Tag(Node root);
 static void _ExtDefList(Node root, type var_type);
 static void _FuncDec(Node root, type return_type);
 static int _hasDuplicateName(symbol_node head);
+static void _Args(Node root, symbol_node func_symbol);
+static type _CompSt(Node root);
+static type _StmtList(Node root);
 
 #endif

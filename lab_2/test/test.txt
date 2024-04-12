@@ -1,11 +1,11 @@
-struct s{
-	float i = 1;
-	int k;
-};
-int test(){
-
+int nl;
+int func(int i)
+{
+return i;
 }
+
 int main()
 {
-test();
+func(1, 2);
+return nl;
 }
