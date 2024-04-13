@@ -20,7 +20,7 @@ struct _Type{
         // 结构体类型
         symbol_node struct_pointer;
         // 函数类型，包含返回类型喝参数类型
-        struct{type return_type; symbol_node par_type}func_type;
+        struct{type return_type; symbol_node par_type;}func_type;
     }data;
 };
 

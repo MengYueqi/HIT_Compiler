@@ -1,4 +1,5 @@
 int nl;
+float j;
 int func(int i)
 {
 return i;
@@ -6,6 +7,8 @@ return i;
 
 int main()
 {
-func(1, 2);
-return nl;
+int i;
+int it;
+func(i);
+return j;
 }

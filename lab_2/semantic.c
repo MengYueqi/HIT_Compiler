@@ -81,6 +81,9 @@ static void _ExtDef(Node root){
             }
         } else {
             type real_return_type = _CompSt(root->child[2]);
+            // 获取所有局部变量
+            // TODO: 之后对变量是否定义时，函数内部要加上参数列表和局部变量列表
+            _printSymbolList(_DefList(root->child[2]->child[1]));
             // 这里有一个空函数引发的奇怪 bug 注意一下
             if (!real_return_type){
                 // 这个地方可能会查出来 NULL，所以一定要看一下是否为空指针，不然很麻烦
@@ -229,6 +232,10 @@ static symbol_node _DefList(Node root){
     // 获取 Def
     symbol_node head_pointer = _createSymbolNode();
     head_pointer->next = NULL;
+    // 如果一个儿子都没有，直接返回，不然会出空指针异常
+    if (root->num_child == 0){
+        return head_pointer;
+    }
     while (1){
         symbol_node temp = _createSymbolNode();
         type t = _Specifier(root->child[0]->child[0]);
@@ -360,6 +367,7 @@ static type _Exp(Node root){
             symbol_node s = _createSymbolNode();
             s->name = root->child[0]->ID_NAME;
             if (!_findRecord(head, s)){
+                fault = 1;
                 // 当调用一个函数没有定义的时候，报错
                 printf("Error type 2 at Line %d: \"%s\" is undefined and cannot be invoked.\n", root->child[0]->line, root->child[0]->ID_NAME);
             } else if (_findRecord(head, s)->symbolType->kind != FUNCTION){
