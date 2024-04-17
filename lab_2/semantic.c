@@ -481,8 +481,6 @@ static void _semantic(Node root){
     // 这里从 CompSt 开始调用，防止将结构体中的局部变量也添加到变量表中
     } else if (!strcmp(root->name, "CompSt") && (root->child[1]->num_child == 2)){
         _Def(root->child[1]->child[0]);
-    // } else if (!strcmp(root->name, "Def")){
-    //     _Def(root);
     } else if (!strcmp(root->name, "Exp")){
         _Exp(root); 
     }

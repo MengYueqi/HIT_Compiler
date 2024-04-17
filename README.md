@@ -115,6 +115,27 @@ struct _Type{
 
 其中 `kind` 为基本类型，`data` 为基本类型的必要补充。另外，在 `semantic.h` 中还有其他函数的声明，在 `semantic.c` 中包含对具体的函数的实现。
 
+### 语义分析过程
+通过查看 `semantic` 可以发现，语义分析是从语法分析树的根节点开始进行的，所以首先需要使用词法和语法分析器构建语法分析树。之后根据这个分析树进行分析。这里分析其实是一个递归分析的过程，具体函数核心代码如下：
+
+```c
+// 根据不同的产生式部分进行分析 
+if (!strcmp(root->name, "ExtDef")){
+    _ExtDef(root);
+// 这里从 CompSt 开始调用，防止将结构体中的局部变量也添加到变量表中
+} else if (!strcmp(root->name, "CompSt") && (root->child[1]->num_child == 2)){
+    _Def(root->child[1]->child[0]);
+} else if (!strcmp(root->name, "Exp")){
+    _Exp(root); 
+}
+for (int i = 0; i < root->num_child; i++){
+    _semantic(root->child[i]);
+}
+```
+
+可以看到，实际上是从 `_ExtDef`, `_Def`, `_Exp` 开始分析的，在每个节点的函数内，又对语义进行具体的分析，可能调用其他节点。之后算法会继续递归调用其他子节点，进行分析。
+
+
 ### 编译过程说明
 如需使用该项目的代码内容，可以在 MacOS 下使用命令进行编译：
 ```
