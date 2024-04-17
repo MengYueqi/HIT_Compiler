@@ -56,5 +56,7 @@ static int _hasDuplicateName(symbol_node head);
 static void _Args(Node root, symbol_node func_symbol);
 static type _CompSt(Node root);
 static type _StmtList(Node root);
+static void _VarList(Node root);
+static void _ParamDec(Node root);
 
 #endif

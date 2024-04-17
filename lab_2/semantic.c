@@ -80,23 +80,27 @@ static void _ExtDef(Node root){
                 return;
             }
         } else {
-            type real_return_type = _CompSt(root->child[2]);
-            // 获取所有局部变量
-            // TODO: 之后对变量是否定义时，函数内部要加上参数列表和局部变量列表
-            _printSymbolList(_DefList(root->child[2]->child[1]));
-            // 这里有一个空函数引发的奇怪 bug 注意一下
-            if (!real_return_type){
-                // 这个地方可能会查出来 NULL，所以一定要看一下是否为空指针，不然很麻烦
-                return;
-            } else if (return_type->kind == BASIC){
-                if (real_return_type->kind != BASIC || real_return_type->data.basic != return_type->data.basic){
-                    printf("Error type 8 at Line %d: The function's return value does not match its definition.\n", root->child[1]->line);
-                }
-            } else if (return_type->kind != real_return_type->kind){
-                // 啊这个地方写的不是很严谨
-                // 都是数组可能会被抹过去，有时间会再完善一下
-                printf("Error type 8 at Line %d: The function's return value does not match its definition.\n", root->child[1]->line);
-            }
+            // TODO: 这里有个问题，会使得函数内定义的局部变量不被识别
+            // 要是改不了这个功能暂时不用了
+            // 这里删去的对函数返回值和定义不 match 的判断
+
+            // type real_return_type = _CompSt(root->child[2]);
+            // // 获取所有局部变量
+            // // TODO: 之后对变量是否定义时，函数内部要加上参数列表和局部变量列表
+            // _printSymbolList(_DefList(root->child[2]->child[1]));
+            // // 这里有一个空函数引发的奇怪 bug 注意一下
+            // if (!real_return_type){
+            //     // 这个地方可能会查出来 NULL，所以一定要看一下是否为空指针，不然很麻烦
+            //     return;
+            // } else if (return_type->kind == BASIC){
+            //     if (real_return_type->kind != BASIC || real_return_type->data.basic != return_type->data.basic){
+            //         printf("Error type 8 at Line %d: The function's return value does not match its definition.\n", root->child[1]->line);
+            //     }
+            // } else if (return_type->kind != real_return_type->kind){
+            //     // 啊这个地方写的不是很严谨
+            //     // 都是数组可能会被抹过去，有时间会再完善一下
+            //     printf("Error type 8 at Line %d: The function's return value does not match its definition.\n", root->child[1]->line);
+            // }
         }
     }
 }
@@ -135,6 +139,22 @@ static void _FuncDec(Node root, type return_type){
         printf("Error type 4 at Line %d: The function name \"%s\" is duplicated.\n", root->child[0]->line, root->child[0]->ID_NAME);
     }
     _addRecord(temp);
+    _VarList(root->child[2]);
+}
+
+// 对 VarList 的分析
+static void _VarList(Node root){
+    while(root->num_child != 1){
+        _ParamDec(root->child[0]);
+        root = root->child[2];
+    }
+    _ParamDec(root->child[0]);
+}
+
+// 对 ParamDec 的分析
+static void _ParamDec(Node root){
+    type t = _Specifier(root->child[0]);
+    _VarDec(root->child[1], t);
 }
 
 // 对 ExtDecList 进行分析
@@ -461,6 +481,8 @@ static void _semantic(Node root){
     // 这里从 CompSt 开始调用，防止将结构体中的局部变量也添加到变量表中
     } else if (!strcmp(root->name, "CompSt") && (root->child[1]->num_child == 2)){
         _Def(root->child[1]->child[0]);
+    // } else if (!strcmp(root->name, "Def")){
+    //     _Def(root);
     } else if (!strcmp(root->name, "Exp")){
         _Exp(root); 
     }

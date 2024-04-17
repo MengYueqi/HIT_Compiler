@@ -60,6 +60,8 @@ gcc -Wall lex.yy.c tree.c syntax.tab.c main.c -o parser -ll
 目前已经完成的进度：
 ![graph](./lab_2/graph/funcs.png)
 
+*PS: 这里由于是参考南京大学的参考书，要求比较多。但实际写到一半我才知道 HIT 只要求完成少部分内容，所以我目前没有写完所有南大的内容，之后有时间会补上的哈哈。*
+
 实验 2 的具体结构如下：
 ```
 .

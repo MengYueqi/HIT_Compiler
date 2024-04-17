@@ -1,14 +1,9 @@
-int nl;
-float j;
 int func(int i)
 {
 return i;
 }
 
-int main()
+int main(int i, int j)
 {
-int i;
-int it;
-func(i);
 return j;
 }
