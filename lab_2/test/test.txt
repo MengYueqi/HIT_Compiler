@@ -1,9 +1,12 @@
-int func(int i)
+float f;
+int a[10];
+int func(int k)
 {
-return i;
+return k;
 }
 
-int main(int i, int j)
+int main(int j)
 {
+f = f + a;
 return j;
 }

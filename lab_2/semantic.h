@@ -58,5 +58,6 @@ static type _CompSt(Node root);
 static type _StmtList(Node root);
 static void _VarList(Node root);
 static void _ParamDec(Node root);
+static void _Stmt(Node root);
 
 #endif

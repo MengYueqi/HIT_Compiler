@@ -463,6 +463,27 @@ static void _Args(Node root, symbol_node func_symbol){
     
 }
 
+// 对 Stmt 的分析
+static void _Stmt(Node root){
+    switch (root->num_child){
+    case 2:
+        _Exp(root->child[0]);
+        break;
+    case 3:
+        _Exp(root->child[1]);
+        break;
+    case 4:
+        _Exp(root->child[2]);
+        break;
+    case 7:
+        _Exp(root->child[2]);
+        break;
+    case 5:
+        _Exp(root->child[2]);
+        break;
+    } 
+}
+
 // 向外暴露的语义分析器
 void semantic(Node root){
     _initSymbolList();
@@ -481,8 +502,10 @@ static void _semantic(Node root){
     // 这里从 CompSt 开始调用，防止将结构体中的局部变量也添加到变量表中
     } else if (!strcmp(root->name, "CompSt") && (root->child[1]->num_child == 2)){
         _Def(root->child[1]->child[0]);
-    } else if (!strcmp(root->name, "Exp")){
-        _Exp(root); 
+    } else if (!strcmp(root->name, "Stmt")){
+        // 这里用 Stmt 对所有可能的 Exp 进行调用
+        // 防止重复调用 Exp 引发的问题
+        _Stmt(root); 
     }
     for (int i = 0; i < root->num_child; i++){
         _semantic(root->child[i]);
