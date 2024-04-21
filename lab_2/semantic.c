@@ -139,7 +139,9 @@ static void _FuncDec(Node root, type return_type){
         printf("Error type 4 at Line %d: The function name \"%s\" is duplicated.\n", root->child[0]->line, root->child[0]->ID_NAME);
     }
     _addRecord(temp);
-    _VarList(root->child[2]);
+    if (root->num_child == 4){
+        _VarList(root->child[2]);
+    }
 }
 
 // 对 VarList 的分析
@@ -404,12 +406,15 @@ static type _Exp(Node root){
         if (!strcmp(root->child[1]->name, "LB")){
             type t1 = _Exp(root->child[0]);
             type t2 = _Exp(root->child[2]);
+            if (!t1 || !t2){
+                return NULL;
+            }
             if (t1->kind != ARRAY){
                 fault = 1;
                 printf("Error type 10 at Line %d: \"%s\" is not an array.\n", root->child[0]->line, root->child[0]->child[0]->ID_NAME);
             } else if (t2->kind != BASIC || t2->data.basic != INT){
                 fault = 1;
-                printf("Error type 12 at Line %d: \"%s\" is not an integer.\n", root->child[0]->line, root->child[2]->child[0]->ID_NAME);
+                printf("Error type 12 at Line %d: \"%f\" is not an integer.\n", root->child[0]->line, root->child[2]->child[0]->FLOAT_NUM);
             }
         } else if (!strcmp(root->child[1]->name, "DOT")){
             // 对非结构体变量使用 '.' 进行审查
@@ -438,6 +443,9 @@ static type _Exp(Node root){
                 // 对于有关 ID 的赋值操作
                 type t1 = _Exp(root->child[0]);
                 type t2 = _Exp(root->child[2]);
+                if (!t1 || !t2){
+                    return NULL;
+                }
                 if (t1->data.basic != t2->data.basic){
                     fault = 1;
                     printf("Error type 5 at Line %d: Type mismatched for assignment.\n", root->child[0]->line);
@@ -447,6 +455,9 @@ static type _Exp(Node root){
             // 对其他运算操作进行审查
             type t1 = _Exp(root->child[0]);
             type t2 = _Exp(root->child[2]);
+            if (!t1 || !t2){
+                return NULL;
+            }
             if (t1->data.basic != t2->data.basic){
                 fault = 1;
                 printf("Error type 7 at Line %d: Type mismatched for operands.\n", root->child[0]->line);
@@ -499,9 +510,8 @@ static void _semantic(Node root){
     // 根据不同的产生式部分进行分析 
     if (!strcmp(root->name, "ExtDef")){
         _ExtDef(root);
-    // 这里从 CompSt 开始调用，防止将结构体中的局部变量也添加到变量表中
-    } else if (!strcmp(root->name, "CompSt") && (root->child[1]->num_child == 2)){
-        _Def(root->child[1]->child[0]);
+    } else if (!strcmp(root->name, "Def")){
+        _Def(root);
     } else if (!strcmp(root->name, "Stmt")){
         // 这里用 Stmt 对所有可能的 Exp 进行调用
         // 防止重复调用 Exp 引发的问题

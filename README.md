@@ -126,17 +126,24 @@ struct _Type{
 通过查看 `semantic` 可以发现，语义分析是从语法分析树的根节点开始进行的，所以首先需要使用词法和语法分析器构建语法分析树。之后根据这个分析树进行分析。这里分析其实是一个递归分析的过程，具体函数核心代码如下：
 
 ```c
-// 根据不同的产生式部分进行分析 
-if (!strcmp(root->name, "ExtDef")){
-    _ExtDef(root);
-// 这里从 CompSt 开始调用，防止将结构体中的局部变量也添加到变量表中
-} else if (!strcmp(root->name, "CompSt") && (root->child[1]->num_child == 2)){
-    _Def(root->child[1]->child[0]);
-} else if (!strcmp(root->name, "Exp")){
-    _Exp(root); 
-}
-for (int i = 0; i < root->num_child; i++){
-    _semantic(root->child[i]);
+// 语义分析函数
+static void _semantic(Node root){
+    if (root == NULL){
+        return;
+    }
+    // 根据不同的产生式部分进行分析 
+    if (!strcmp(root->name, "ExtDef")){
+        _ExtDef(root);
+    } else if (!strcmp(root->name, "Def")){
+        _Def(root);
+    } else if (!strcmp(root->name, "Stmt")){
+        // 这里用 Stmt 对所有可能的 Exp 进行调用
+        // 防止重复调用 Exp 引发的问题
+        _Stmt(root); 
+    }
+    for (int i = 0; i < root->num_child; i++){
+        _semantic(root->child[i]);
+    }
 }
 ```
 

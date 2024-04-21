@@ -1,0 +1,6 @@
+int main(){
+int a;
+int c[10];
+a = a + c;
+return a;
+}
