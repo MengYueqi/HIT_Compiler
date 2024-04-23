@@ -382,14 +382,14 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[75] =
     {   0,
-        0,    0,   31,   29,    2,    1,    1,   15,   29,   16,
-       17,   10,    8,    6,    9,   14,   11,    3,    3,    5,
-        7,   28,   18,   19,   28,   28,   28,   28,   28,   28,
-       20,   29,   21,    2,    1,   12,    0,    3,    3,    4,
-        3,    4,    0,    0,    3,   28,   28,   28,   24,   28,
-       28,   28,   28,   13,    0,    4,    3,   28,   28,   27,
-       28,   28,   28,   25,   28,   28,   28,   28,   28,   28,
-       26,   23,   22,    0
+        0,    0,   31,   29,    2,    1,    1,   13,   29,   14,
+       15,    6,    8,    4,    5,   12,    7,   26,   26,    3,
+        9,   28,   16,   17,   28,   28,   28,   28,   28,   28,
+       18,   29,   19,    2,    1,   10,    0,   26,   26,   27,
+       26,   27,    0,    0,   26,   28,   28,   28,   22,   28,
+       28,   28,   28,   11,    0,   27,   26,   28,   28,   25,
+       28,   28,   28,   23,   28,   28,   28,   28,   28,   28,
+       24,   21,   20,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -835,27 +835,27 @@ YY_RULE_SETUP
 case 3:
 YY_RULE_SETUP
 #line 18 "lex.l"
-{yylval.node = newNode("INT", 0, yylineno, NULL); return INT;}
+{yylval.node = newNode("SEMI", 0, yylineno, NULL); return SEMI;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 19 "lex.l"
-{yylval.node = newNode("FLOAT", 0, yylineno, NULL); return FLOAT;}
+{yylval.node = newNode("COMMA", 0, yylineno, NULL); return COMMA;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 20 "lex.l"
-{yylval.node = newNode("SEMI", 0, yylineno, NULL); return SEMI;}
+{yylval.node = newNode("MINUS", 0, yylineno, NULL); return MINUS;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 21 "lex.l"
-{yylval.node = newNode("COMMA", 0, yylineno, NULL); return COMMA;}
+{yylval.node = newNode("STAR", 0, yylineno, NULL); return STAR;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 22 "lex.l"
-{yylval.node = newNode("ASSIGNOP", 0, yylineno, NULL); return ASSIGNOP;}
+{yylval.node = newNode("DIV", 0, yylineno, NULL); return DIV;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
@@ -865,97 +865,97 @@ YY_RULE_SETUP
 case 9:
 YY_RULE_SETUP
 #line 24 "lex.l"
-{yylval.node = newNode("MINUS", 0, yylineno, NULL); return MINUS;}
+{yylval.node = newNode("ASSIGNOP", 0, yylineno, NULL); return ASSIGNOP;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 25 "lex.l"
-{yylval.node = newNode("STAR", 0, yylineno, NULL); return STAR;}
+{yylval.node = newNode("AND", 0, yylineno, NULL); return AND;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 26 "lex.l"
-{yylval.node = newNode("DIV", 0, yylineno, NULL); return DIV;}
+{yylval.node = newNode("OR", 0, yylineno, NULL); return OR;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 27 "lex.l"
-{yylval.node = newNode("AND", 0, yylineno, NULL); return AND;}
+{yylval.node = newNode("DOT", 0, yylineno, NULL); return DOT;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 28 "lex.l"
-{yylval.node = newNode("OR", 0, yylineno, NULL); return OR;}
+{yylval.node = newNode("NOT", 0, yylineno, NULL); return NOT;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 29 "lex.l"
-{yylval.node = newNode("DOT", 0, yylineno, NULL); return DOT;}
+{yylval.node = newNode("LP", 0, yylineno, NULL); return LP;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 30 "lex.l"
-{yylval.node = newNode("NOT", 0, yylineno, NULL); return NOT;}
+{yylval.node = newNode("RP", 0, yylineno, NULL); return RP;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 31 "lex.l"
-{yylval.node = newNode("LP", 0, yylineno, NULL); return LP;}
+{yylval.node = newNode("LB", 0, yylineno, NULL); return LB;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 32 "lex.l"
-{yylval.node = newNode("RP", 0, yylineno, NULL); return RP;}
+{yylval.node = newNode("RB", 0, yylineno, NULL); return RB;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 33 "lex.l"
-{yylval.node = newNode("LB", 0, yylineno, NULL); return LB;}
+{yylval.node = newNode("LC", 0, yylineno, NULL); return LC;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 34 "lex.l"
-{yylval.node = newNode("RB", 0, yylineno, NULL); return RB;}
+{yylval.node = newNode("RC", 0, yylineno, NULL); return RC;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 35 "lex.l"
-{yylval.node = newNode("LC", 0, yylineno, NULL); return LC;}
+{yylval.node = newNode("STRUCT", 0, yylineno, NULL); return STRUCT;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 36 "lex.l"
-{yylval.node = newNode("RC", 0, yylineno, NULL); return RC;}
+{yylval.node = newNode("RETURN", 0, yylineno, NULL); return RETURN;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 37 "lex.l"
-{yylval.node = newNode("STRUCT", 0, yylineno, NULL); return STRUCT;}
+{yylval.node = newNode("IF", 0, yylineno, NULL); return IF;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 38 "lex.l"
-{yylval.node = newNode("RETURN", 0, yylineno, NULL); return RETURN;}
+{yylval.node = newNode("ELSE", 0, yylineno, NULL); return ELSE;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 39 "lex.l"
-{yylval.node = newNode("IF", 0, yylineno, NULL); return IF;}
+{yylval.node = newNode("WHILE", 0, yylineno, NULL); return WHILE;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 40 "lex.l"
-{yylval.node = newNode("ELSE", 0, yylineno, NULL); return ELSE;}
+{yylval.node = newNode("TYPE", 0, yylineno, NULL); return TYPE;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 41 "lex.l"
-{yylval.node = newNode("WHILE", 0, yylineno, NULL); return WHILE;}
+{yylval.node = newNode("INT", 0, yylineno, NULL); return INT;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 42 "lex.l"
-{yylval.node = newNode("TYPE", 0, yylineno, NULL); return TYPE;}
+{yylval.node = newNode("FLOAT", 0, yylineno, NULL); return FLOAT;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP

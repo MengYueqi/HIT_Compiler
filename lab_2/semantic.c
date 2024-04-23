@@ -76,6 +76,7 @@ static void _ExtDef(Node root){
         // 会的同学帮一帮
         if (root->child[2]->child[2]->num_child != 2){
             if (return_type){
+                fault = 1;
                 printf("Error type 8 at Line %d: The function's return value does not match its definition.\n", root->child[1]->line);
                 return;
             }
@@ -435,14 +436,14 @@ static type _Exp(Node root){
                 }
             }
         } else if (!strcmp(root->child[1]->name, "ASSIGNOP")){
+            // 对于有关 ID 的赋值操作
+            type t1 = _Exp(root->child[0]);
+            type t2 = _Exp(root->child[2]);
             // 先对不能为左值的数据进行审查
             if (!strcmp(root->child[0]->child[0]->name, "INT") || !strcmp(root->child[0]->child[0]->name, "FLOAT")){
                 fault = 1;
                 printf("Error type 6 at Line %d: The left-hand side of an assignment must be a variable.\n", root->child[0]->line);
             } else if (!strcmp(root->child[0]->child[0]->name, "ID")){
-                // 对于有关 ID 的赋值操作
-                type t1 = _Exp(root->child[0]);
-                type t2 = _Exp(root->child[2]);
                 if (!t1 || !t2){
                     return NULL;
                 }
