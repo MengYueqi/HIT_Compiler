@@ -8,6 +8,7 @@
 %}
 
 %option yylineno
+RELOP >|<|>=|<=|==|!=
 
 digit [0-9]
 
@@ -15,6 +16,7 @@ digit [0-9]
 
 [\r\n]+
 [ \t]+      
+{RELOP} {yylval.node = newNode("RELOP", 0, yylineno, NULL); return RELOP;}
 ";"   {yylval.node = newNode("SEMI", 0, yylineno, NULL); return SEMI;}
 ","   {yylval.node = newNode("COMMA", 0, yylineno, NULL); return COMMA;}
 "-"   {yylval.node = newNode("MINUS", 0, yylineno, NULL); return MINUS;}

@@ -424,6 +424,8 @@ static type _Exp(Node root){
                 fault = 1;
                 printf("Error type 13 at Line %d: \"%s\" is not a struct type, cannot be accessed using DOT notation.\n", root->child[0]->line, root->child[0]->child[0]->ID_NAME);
             } else{
+                // 这个地方写的好像有点问题
+                return NULL;
                 symbol_node temp = _createSymbolNode();
                 temp->name = root->child[0]->child[0]->ID_NAME;
                 // 获取结构体对应的节点

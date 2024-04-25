@@ -1,0 +1,17 @@
+./parser ./test/exp_in_book/input1.cmm
+./parser ./test/exp_in_book/input2.cmm
+./parser ./test/exp_in_book/input3.cmm
+./parser ./test/exp_in_book/input4.cmm
+./parser ./test/exp_in_book/input5.cmm
+./parser ./test/exp_in_book/input6.cmm
+./parser ./test/exp_in_book/input7.cmm
+./parser ./test/exp_in_book/input8.cmm
+./parser ./test/exp_in_book/input9.cmm
+./parser ./test/exp_in_book/input10.cmm
+./parser ./test/exp_in_book/input11.cmm
+./parser ./test/exp_in_book/input12.cmm
+./parser ./test/exp_in_book/input13.cmm
+./parser ./test/exp_in_book/input14.cmm
+./parser ./test/exp_in_book/input15.cmm
+./parser ./test/exp_in_book/input16.cmm
+./parser ./test/exp_in_book/input17.cmm
