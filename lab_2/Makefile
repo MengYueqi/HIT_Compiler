@@ -18,7 +18,6 @@ TARGET = parser
 # Bison source
 BISON_FLAGS = -d
 
-
 # Source files
 LEX_SOURCE = lex.l
 LEX_C = lex.yy.c
@@ -28,17 +27,43 @@ BISON_SOURCE = syntax.y
 BISON_OUT = syntax.tab.c
 SEMANTIC = semantic.c
 
-all: $(TARGET)
+# 获取系统信息
+ARCH = "`uname -s`"
+MACOS = "Darwin"
+LINUX = "Linux"
 
-$(TARGET): $(LEX_C) $(SEMANTIC) $(BISON_OUT) $(MAIN) $(TREE_SOURCE)
-	$(CC) $(CFLAGS) $(LEX_C) $(TREE_SOURCE) $(BISON_OUT) $(SEMANTIC) $(MAIN) -o $(TARGET) -ll -ly
-	# rm -f $(LEX_C)
+all: build
 
-$(LEX_C): $(LEX_SOURCE) $(BISON_OUT)
-	$(FLEX) $(LEX_SOURCE) 
+build:
+	@if [ $(ARCH) = $(MACOS) ]; \
+	then \
+		$(TARGET): $(LEX_C) $(SEMANTIC) $(BISON_OUT) $(MAIN) $(TREE_SOURCE) ;\
+			$(CC) $(CFLAGS) $(LEX_C) $(TREE_SOURCE) $(BISON_OUT) $(SEMANTIC) $(MAIN) -o $(TARGET) -ll -ly ;\
+			rm -f $(LEX_C) ;\
+		$(LEX_C): $(LEX_SOURCE) $(BISON_OUT) ;\
+			$(FLEX) $(LEX_SOURCE) ;\
+		$(BISON_OUT): $(BISON_SOURCE) ;\
+			$(BISON) $(BISON_FLAGS) $(BISON_SOURCE) ;\
+	elif [ $(ARCH) = $(LINUX) ]; \
+	then \
+		$(TARGET): $(LEX_C) $(SEMANTIC) $(BISON_OUT) $(MAIN) $(TREE_SOURCE) ;\
+			$(CC) $(CFLAGS) $(LEX_C) $(TREE_SOURCE) $(BISON_OUT) $(SEMANTIC) $(MAIN) -o $(TARGET) -lfl ;\
+			rm -f $(LEX_C) ;\
+		$(LEX_C): $(LEX_SOURCE) $(BISON_OUT) ;\
+			$(FLEX) $(LEX_SOURCE) ;\
+		$(BISON_OUT): $(BISON_SOURCE) ;\
+			$(BISON) $(BISON_FLAGS) $(BISON_SOURCE) ;\
+	else \
+		@echo "Unsupported operating system: $(ARCH)" ;\
+	fi
 
-$(BISON_OUT): $(BISON_SOURCE)
-	$(BISON) $(BISON_FLAGS) $(BISON_SOURCE)
+clean:
+	rm -f $(TARGET) $(LEX_C) $(BISON_OUT)
+
+
+	else \
+		@echo "Unsupported operating system: $(ARCH)" ;\
+	fi
 
 clean:
 	rm -f $(TARGET) $(LEX_C) $(BISON_OUT)

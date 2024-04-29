@@ -72,23 +72,22 @@ static void _ExtDef(Node root){
         _FuncDec(root->child[1], t);
         type return_type = _Specifier(root->child[0]);
         // 判断是空函数，然后提前避免一下
-        // 我真的不知道后面要是空函数送到里面判断为什么会出现段错误，呜呜
-        // 会的同学帮一帮
+        // TODO: 这里主要是返回值的识别问题，之后我会再写一下
         if (root->child[2]->child[2]->num_child != 2){
-            if (return_type){
-                fault = 1;
-                printf("Error type 8 at Line %d: The function's return value does not match its definition.\n", root->child[1]->line);
-                return;
-            }
+            // if (return_type){
+            //     fault = 1;
+            //     printf("Error type 8 at Line %d: The function's return value does not match its definition.\n", root->child[1]->line);
+            //     return;
+            // }
         } else {
-            // TODO: 这里有个问题，会使得函数内定义的局部变量不被识别
-            // 要是改不了这个功能暂时不用了
-            // 这里删去的对函数返回值和定义不 match 的判断
+            // // TODO: 这里有个问题，会使得函数内定义的局部变量不被识别
+            // // 要是改不了这个功能暂时不用了
+            // // 这里删去的对函数返回值和定义不 match 的判断
 
             // type real_return_type = _CompSt(root->child[2]);
             // // 获取所有局部变量
             // // TODO: 之后对变量是否定义时，函数内部要加上参数列表和局部变量列表
-            // _printSymbolList(_DefList(root->child[2]->child[1]));
+            // // _printSymbolList(_DefList(root->child[2]->child[1]));
             // // 这里有一个空函数引发的奇怪 bug 注意一下
             // if (!real_return_type){
             //     // 这个地方可能会查出来 NULL，所以一定要看一下是否为空指针，不然很麻烦
