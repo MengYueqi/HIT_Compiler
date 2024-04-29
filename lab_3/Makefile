@@ -26,6 +26,7 @@ TREE_SOURCE = tree.c
 BISON_SOURCE = syntax.y
 BISON_OUT = syntax.tab.c
 SEMANTIC = semantic.c
+INTER = inter.c
 
 # 获取系统信息
 ARCH := $(shell uname -s)
@@ -43,8 +44,8 @@ all: build
 
 build: $(TARGET)
 
-$(TARGET): $(LEX_C) $(SEMANTIC) $(BISON_OUT) $(MAIN) $(TREE_SOURCE)
-	$(CC) $(CFLAGS) $(LEX_C) $(TREE_SOURCE) $(BISON_OUT) $(SEMANTIC) $(MAIN) -o $(TARGET) $(LIBS)
+$(TARGET): $(LEX_C) $(SEMANTIC) $(BISON_OUT) $(MAIN) $(TREE_SOURCE) $(INTER)
+	$(CC) $(CFLAGS) $(LEX_C) $(TREE_SOURCE) $(BISON_OUT) $(SEMANTIC) $(INTER) $(MAIN) -o $(TARGET) $(LIBS) -Wunused-function
 
 $(LEX_C): $(LEX_SOURCE) $(BISON_OUT)
 	$(FLEX) $(LEX_SOURCE)
