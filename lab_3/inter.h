@@ -94,6 +94,9 @@ typedef struct _interCodeList {
     int labelNum;
 } InterCodeList;
 
+// 所有 InterCode 相关代码
+pInterCode newInterCode(int kind, ...);
+
 void genInterCodes(Node root);
 static inline void _translateExtDefList(Node root);
 static inline void _translateExtDef(Node root);
@@ -102,6 +105,7 @@ static inline void _translateCompSt(Node root);
 static inline void _translateDefList(Node root);
 static inline void _translateStmtList(Node root);
 static inline void _translateStmt(Node root);
+static inline void _translateDef(Node root);
 
 
 # endif
