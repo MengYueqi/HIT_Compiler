@@ -96,6 +96,12 @@ typedef struct _interCodeList {
 
 void genInterCodes(Node root);
 static inline void _translateExtDefList(Node root);
+static inline void _translateExtDef(Node root);
+static inline void _translateFunDec(Node root);
+static inline void _translateCompSt(Node root);
+static inline void _translateDefList(Node root);
+static inline void _translateStmtList(Node root);
+static inline void _translateStmt(Node root);
 
 
 # endif
