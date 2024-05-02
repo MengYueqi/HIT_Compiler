@@ -45,7 +45,6 @@ static inline void _translateExtDef(Node root){
 
 // 对 FunDec 进行翻译
 static inline void _translateFunDec(Node root){
-    // TODO: 核心部分
     assert(root != NULL);
     genInterCode(IR_FUNCTION, newOperand(OP_FUNCTION, _newString(root->child[0]->ID_NAME)));
     if (root->num_child == 4){
@@ -79,7 +78,77 @@ static inline void _translateDefList(Node root){
 
 // 对 Def 进行分析
 static inline void _translateDef(Node root){
+    assert(root != NULL);
+    _translateDecList(root->child[1]);
+}
 
+// 对 DecList 进行分析
+static inline void _translateDecList(Node root){
+    while (root->num_child != 1){
+        _translateDec(root->child[0]);
+        root = root->child[2];
+    }
+    if (!strcmp(root->child[0]->name, "Dec")){
+        _translateDec(root->child[0]);
+    }
+    
+}
+
+// 对 Dec 进行分析
+static inline void _translateDec(Node root){
+    assert(root != NULL);
+    // 对 Dec -> VarDec 翻译
+    if (root->num_child == 1){
+        _translateVarDec(root->child[0], NULL);
+    }
+    // 对 Dec -> VarDec ASSIGNOP Exp 翻译
+    else {
+        pOperand t1 = newTemp();
+        _translateVarDec(root->child[0], t1);
+        pOperand t2 = newTemp();
+        _translateExp(root->child[2], t2);
+        genInterCode(IR_ASSIGN, t1, t2);
+    }
+}
+
+// 对 VarDec 进行分析
+static inline void _translateVarDec(Node root, pOperand place){
+    // TODO: 这部分需要改一下，可能要和 lab2 结合
+    assert(root != NULL);
+    if (!strcmp(root->child[0]->name, "ID")){
+        // pItem temp = searchTableItem(table, node->child->val);
+        // pType type = temp->field->type;
+        interCodeList->tempVarNum--;
+        // setOperand(place, OP_VARIABLE, (void*)_newString(root->child[0]->ID_NAME));
+        // if (type->kind == BASIC) {
+        //     if (place) {
+        //         interCodeList->tempVarNum--;
+        //         setOperand(place, OP_VARIABLE,
+        //                    (void*)newString(temp->field->name));
+        //     }
+        // } else if (type->kind == ARRAY) {
+        //     // 不需要完成高维数组情况
+        //     if (type->u.array.elem->kind == ARRAY) {
+        //         printf(
+        //             "Cannot translate: Code containsvariables of "
+        //             "multi-dimensional array type or parameters of array "
+        //             "type.\n");
+        //         return;
+        //     } else {
+        //         genInterCode(
+        //             IR_DEC,
+        //             newOperand(OP_VARIABLE, newString(temp->field->name)),
+        //             getSize(type));
+        //     }
+        // } else if (type->kind == STRUCTURE) {
+        //     // 3.1选做
+        //     genInterCode(IR_DEC,
+        //                  newOperand(OP_VARIABLE, newString(temp->field->name)),
+        //                  getSize(type));
+        // }
+    } else {
+        _translateVarDec(root->child[0], place);
+    } 
 }
 
 // 对 StmtList 进行分析
@@ -95,7 +164,18 @@ static inline void _translateStmtList(Node root){
 // 对 Stmt 进行分析
 static inline void _translateStmt(Node root){
     // TODO: 代码核心部分
+    assert(root != NULL);
+    // 对不同情况进行解析
+    if (!strcmp(root->child[0]->name, "Exp")){
+        _translateExp(root->child[0], NULL);
+    } else if (!strcmp(root->child[0]->name, "CompSt")){
+        _translateCompSt(root->child[0]);
+    }
+}
 
+// 对 Exp 进行分析
+static inline void _translateExp(Node root, pOperand place){
+    // TODO: 代码核心部分
 }
 
 // Op 相关代码

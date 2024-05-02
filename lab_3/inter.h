@@ -115,13 +115,17 @@ void genInterCodes(Node root);
 pInterCodes newInterCodes(pInterCode code);
 pOperand newTemp();
 static inline void _translateExtDefList(Node root);
+static inline void _translateExp(Node root, pOperand place);
+static inline void _translateCompSt(Node root);
 static inline void _translateExtDef(Node root);
 static inline void _translateFunDec(Node root);
-static inline void _translateCompSt(Node root);
 static inline void _translateDefList(Node root);
 static inline void _translateStmtList(Node root);
 static inline void _translateStmt(Node root);
 static inline void _translateDef(Node root);
+static inline void _translateDecList(Node root);
+static inline void _translateDec(Node root);
+static inline void _translateVarDec(Node root, pOperand place);
 pInterCodeList newInterCodeList();
 static inline char* _newString(char* src);
 

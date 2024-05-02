@@ -163,6 +163,9 @@ gcc -Wall lex.yy.c tree.c syntax.tab.c semantic.c main.c -o parser -ll
 ```
 你也可以逐步进行编译，并查看编译的结果。
 
+## 实验3: 中间代码生成
+实验 3 的内容为完成一个中间代码生成器。由于课上讲的内容和实验需要完成的内容有较大差别，实验 3 的中间代码生成器为 [NJU 学长](https://github.com/Tyler-ytr/Compiler)的像素级复刻（在这里感谢 NJU Tyler-ytr 学长），仅供大家参考。
+
 ## 一些踩雷的点
 在写这个实验的时候我有很长时间没碰过 c 语言了，所以非常不熟悉。在这里写一些过程中踩到的雷，大佬请忽略。
 1. c 语言的头文件一定要加上
@@ -180,3 +183,5 @@ gcc -Wall lex.yy.c tree.c syntax.tab.c semantic.c main.c -o parser -ll
 1. 此项目仅供学习交流，请勿将此项目的代码用作商业用途。如用作商业用途，作者不承担任何责任。
 2. 如果你需要任何课程相关的其他资料，请联系我的邮箱：mengyq2002@gmail.com。
 2. 感谢 Open AI [ChatGPT](https://chat.openai.com) 和 Google [Gemini](https://gemini.google.com/app/) 的大力支持。
+
+## 参考资料
