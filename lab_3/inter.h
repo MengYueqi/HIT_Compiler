@@ -3,12 +3,15 @@
 # include "parser.h"
 # include "semantic.h"
 
+
 typedef struct _operand* pOperand;
 typedef struct _interCode* pInterCode;
 typedef struct _interCodes* pInterCodes;
 typedef struct _arg* pArg;
 typedef struct _argList* pArgList;
 typedef struct _interCodeList* pInterCodeList;
+
+pInterCodeList interCodeList;
 
 typedef struct _operand {
     enum {
@@ -73,7 +76,7 @@ typedef struct _interCode {
 
 typedef struct _interCodes {
     pInterCode code;
-    pInterCodes *prev, *next;
+    pInterCodes prev, next;
 } InterCodes;
 
 typedef struct _arg {
@@ -94,10 +97,23 @@ typedef struct _interCodeList {
     int labelNum;
 } InterCodeList;
 
+// 向外暴露接口
+void genInter(Node root);
+
+// 所有 Op 相关代码
+pOperand newOperand(int kind, ...);
+void printOp(FILE* fp, pOperand op);
+
 // 所有 InterCode 相关代码
 pInterCode newInterCode(int kind, ...);
+void genInterCode(int kind, ...);
+void printInterCode(FILE* fp, pInterCodeList interCodeList);
+void addInterCode(pInterCodeList interCodeList, pInterCodes newCode);
 
+// InterCodes 相关函数
 void genInterCodes(Node root);
+pInterCodes newInterCodes(pInterCode code);
+pOperand newTemp();
 static inline void _translateExtDefList(Node root);
 static inline void _translateExtDef(Node root);
 static inline void _translateFunDec(Node root);
@@ -106,6 +122,7 @@ static inline void _translateDefList(Node root);
 static inline void _translateStmtList(Node root);
 static inline void _translateStmt(Node root);
 static inline void _translateDef(Node root);
-
+pInterCodeList newInterCodeList();
+static inline char* _newString(char* src);
 
 # endif

@@ -17,6 +17,7 @@ int main(int argc, char** argv) {
     yyparse();
     // semantic(root);
     DFS(root, 0);
-    genInterCodes(root);
+    interCodeList = newInterCodeList();
+    genInter(root);
     return 0;
 }
