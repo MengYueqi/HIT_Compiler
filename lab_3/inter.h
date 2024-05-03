@@ -12,6 +12,7 @@ typedef struct _argList* pArgList;
 typedef struct _interCodeList* pInterCodeList;
 
 pInterCodeList interCodeList;
+symbol_node symTableList;
 
 typedef struct _operand {
     enum {
@@ -103,6 +104,7 @@ void genInter(Node root);
 // 所有 Op 相关代码
 pOperand newOperand(int kind, ...);
 void printOp(FILE* fp, pOperand op);
+void setOperand(pOperand p, int kind, void* val);
 
 // 所有 InterCode 相关代码
 pInterCode newInterCode(int kind, ...);
@@ -114,6 +116,7 @@ void addInterCode(pInterCodeList interCodeList, pInterCodes newCode);
 void genInterCodes(Node root);
 pInterCodes newInterCodes(pInterCode code);
 pOperand newTemp();
+static inline int _getSize(type sym_type);
 static inline void _translateExtDefList(Node root);
 static inline void _translateExp(Node root, pOperand place);
 static inline void _translateCompSt(Node root);
@@ -126,6 +129,10 @@ static inline void _translateDef(Node root);
 static inline void _translateDecList(Node root);
 static inline void _translateDec(Node root);
 static inline void _translateVarDec(Node root, pOperand place);
+static inline void _translateArgs(Node root, pArgList argList);
+static inline void _translateCond(Node root, pOperand labelTrue, pOperand labelFalse);
+static inline pArgList _newArgList();
+static inline pOperand _newLabel();
 pInterCodeList newInterCodeList();
 static inline char* _newString(char* src);
 

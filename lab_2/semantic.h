@@ -39,7 +39,7 @@ static void _addRecord(symbol_node sym_record);
 static void _ExtDef(Node root);
 static type _createType(Kind kind, int num, ...);
 static type _Specifier(Node root);
-static symbol_node _createSymbolNode();
+static symbol_node createSymbolNode();
 static void _StructSpecifier(Node root);
 static void _DecList(Node root, type var_type);
 static void _Dec(Node root, type var_type);

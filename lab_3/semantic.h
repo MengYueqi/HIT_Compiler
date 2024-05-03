@@ -3,7 +3,6 @@
 
 # include "parser.h"
 
-void semantic(Node root);
 typedef struct _SymbolNode *symbol_node;
 typedef enum {BASIC, ARRAY, STRUCTURE, FUNCTION} Kind;  // 三种类型数据
 typedef enum {INT, FLOAT} basic_type;  // 基本类型
@@ -31,15 +30,19 @@ struct _SymbolNode{
     symbol_node next;
 };
 
+// 向外暴露的接口
+symbol_node semantic(Node root);
+void printSymbolList(symbol_node head);
+symbol_node findRecord(symbol_node head, symbol_node node);
+symbol_node createSymbolNode();
+
 // 内部函数的声明
 static inline void _initSymbolList();
 static inline symbol_node _DefList(Node root);
-static inline void _printSymbolList(symbol_node head);
 static inline void _addRecord(symbol_node sym_record);
 static inline void _ExtDef(Node root);
 static inline type _createType(Kind kind, int num, ...);
 static inline type _Specifier(Node root);
-static inline symbol_node _createSymbolNode();
 static inline void _StructSpecifier(Node root);
 static inline void _DecList(Node root, type var_type);
 static inline void _Dec(Node root, type var_type);
@@ -48,7 +51,6 @@ static inline void _semantic(Node root);
 static inline void _Def(Node root);
 static inline type _Exp(Node root);
 static inline void _OptTag(Node root, symbol_node var);
-static inline symbol_node _findRecord(symbol_node head, symbol_node node);
 static inline void _Tag(Node root);
 static inline void _ExtDefList(Node root, type var_type);
 static inline void _FuncDec(Node root, type return_type);

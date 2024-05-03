@@ -9,7 +9,7 @@
 symbol_node head = NULL;
 
 // 创建变量表
-static symbol_node _createSymbolNode(){
+static symbol_node createSymbolNode(){
     symbol_node pointer = (symbol_node)malloc(sizeof(struct _SymbolNode));
     pointer->name = (char*)malloc(sizeof(35 * sizeof(char)));
     pointer->symbolType = NULL;
@@ -19,7 +19,7 @@ static symbol_node _createSymbolNode(){
 
 // 初始化变量表
 static void _initSymbolList(){
-    head = _createSymbolNode();
+    head = createSymbolNode();
 }
 
 // 打印变量表
@@ -57,7 +57,7 @@ static void _ExtDef(Node root){
     // 如果是结构体类型，特别对待一下
     // 结构体就单独处理了，不把它和其他混在一起，要不结构体内的变量也被添加到变量表里
     if (t->kind == STRUCTURE){
-        symbol_node temp = _createSymbolNode();
+        symbol_node temp = createSymbolNode();
         temp->name = root->child[0]->name;
         // 这里要判断是不是结构体初次定义，如果是的话不能报错
         // 这里直接判断前面有没有相关结构体定义，儿子数不是 5 说明不是定义的结构体
@@ -128,7 +128,7 @@ static type _StmtList(Node root){
 
 // 对 FunDec 的分析
 static void _FuncDec(Node root, type return_type){
-    symbol_node temp = _createSymbolNode();
+    symbol_node temp = createSymbolNode();
     temp->name = root->child[0]->ID_NAME;
     temp->symbolType = _createType(FUNCTION, 2, return_type, NULL);
     if (_findRecord(head, temp)){
@@ -252,14 +252,14 @@ static int _hasDuplicateName(symbol_node head){
 // 对 DefList 的处理
 static symbol_node _DefList(Node root){
     // 获取 Def
-    symbol_node head_pointer = _createSymbolNode();
+    symbol_node head_pointer = createSymbolNode();
     head_pointer->next = NULL;
     // 如果一个儿子都没有，直接返回，不然会出空指针异常
     if (root->num_child == 0){
         return head_pointer;
     }
     while (1){
-        symbol_node temp = _createSymbolNode();
+        symbol_node temp = createSymbolNode();
         type t = _Specifier(root->child[0]->child[0]);
         temp->symbolType = t;
         // 如果出现结构体内就初始化的，报错
@@ -283,7 +283,7 @@ static symbol_node _DefList(Node root){
 // 对 OptTag 的处理
 static void _OptTag(Node root, symbol_node var){
     if (!strcmp(root->child[0]->name, "ID")){
-        symbol_node temp = _createSymbolNode();
+        symbol_node temp = createSymbolNode();
         temp->name = root->child[0]->ID_NAME;
         temp->symbolType = _createType(STRUCTURE, 1, var);
         if (_findRecord(head, temp)){
@@ -302,7 +302,7 @@ static void _OptTag(Node root, symbol_node var){
 
 // 对 Tag 的处理
 static void _Tag(Node root){
-    symbol_node temp = _createSymbolNode();
+    symbol_node temp = createSymbolNode();
     temp->name = root->child[0]->ID_NAME;
     temp->symbolType = _createType(STRUCTURE, 1, NULL);
     // 这里还没有写 structure 后面跟的属性值
@@ -333,7 +333,7 @@ static void _VarDec(Node root, type var_type){
         id = id->child[0];
     }
     // 初始化 node 节点的数据并设置
-    symbol_node temp = _createSymbolNode();
+    symbol_node temp = createSymbolNode();
     strcpy(temp->name, id->ID_NAME);
     // 非数组元素
     if (!strcmp(root->child[0]->name, "ID")){
@@ -375,7 +375,7 @@ static type _Exp(Node root){
             // 对 ID 的分析
             // 这里注意的是，变量表中的 node 和树中的 node 是不一样的类型
             // 所以要转换一下
-            symbol_node s = _createSymbolNode();
+            symbol_node s = createSymbolNode();
             s->name = root->child[0]->ID_NAME;
             if (!_findRecord(head, s)){
                 fault = 1;
@@ -386,7 +386,7 @@ static type _Exp(Node root){
             }
         } else {
             // 大于一个儿子，判断是函数调用
-            symbol_node s = _createSymbolNode();
+            symbol_node s = createSymbolNode();
             s->name = root->child[0]->ID_NAME;
             if (!_findRecord(head, s)){
                 fault = 1;
@@ -425,7 +425,7 @@ static type _Exp(Node root){
             } else{
                 // 这个地方写的好像有点问题
                 return NULL;
-                symbol_node temp = _createSymbolNode();
+                symbol_node temp = createSymbolNode();
                 temp->name = root->child[0]->child[0]->ID_NAME;
                 // 获取结构体对应的节点
                 symbol_node stru = _findRecord(head, temp);

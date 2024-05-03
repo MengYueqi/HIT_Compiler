@@ -15,9 +15,10 @@ int main(int argc, char** argv) {
     }
     yyrestart(f);
     yyparse();
-    // semantic(root);
+    symbol_node symTable = semantic(root);
     DFS(root, 0);
     interCodeList = newInterCodeList();
+    symTableList = symTable;
     genInter(root);
     return 0;
 }

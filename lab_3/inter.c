@@ -1,4 +1,5 @@
 # include "inter.h"
+# include "semantic.h"
 # include <assert.h>
 # include <stdarg.h>
 
@@ -113,39 +114,24 @@ static inline void _translateDec(Node root){
 
 // 对 VarDec 进行分析
 static inline void _translateVarDec(Node root, pOperand place){
-    // TODO: 这部分需要改一下，可能要和 lab2 结合
     assert(root != NULL);
     if (!strcmp(root->child[0]->name, "ID")){
-        // pItem temp = searchTableItem(table, node->child->val);
-        // pType type = temp->field->type;
-        interCodeList->tempVarNum--;
-        // setOperand(place, OP_VARIABLE, (void*)_newString(root->child[0]->ID_NAME));
-        // if (type->kind == BASIC) {
-        //     if (place) {
-        //         interCodeList->tempVarNum--;
-        //         setOperand(place, OP_VARIABLE,
-        //                    (void*)newString(temp->field->name));
-        //     }
-        // } else if (type->kind == ARRAY) {
-        //     // 不需要完成高维数组情况
-        //     if (type->u.array.elem->kind == ARRAY) {
-        //         printf(
-        //             "Cannot translate: Code containsvariables of "
-        //             "multi-dimensional array type or parameters of array "
-        //             "type.\n");
-        //         return;
-        //     } else {
-        //         genInterCode(
-        //             IR_DEC,
-        //             newOperand(OP_VARIABLE, newString(temp->field->name)),
-        //             getSize(type));
-        //     }
-        // } else if (type->kind == STRUCTURE) {
-        //     // 3.1选做
-        //     genInterCode(IR_DEC,
-        //                  newOperand(OP_VARIABLE, newString(temp->field->name)),
-        //                  getSize(type));
-        // }
+        symbol_node tar = createSymbolNode();
+        tar->name = root->child[0]->ID_NAME;
+        symbol_node temp = findRecord(symTableList, tar);
+        type sym_type = temp->symbolType;
+        if (sym_type->kind == BASIC) {
+            if (place) {
+                interCodeList->tempVarNum--;
+                setOperand(place, OP_VARIABLE,
+                           (void*)_newString(root->child[0]->ID_NAME));
+            }
+        } else if (sym_type->kind == ARRAY) {
+                genInterCode(
+                    IR_DEC,
+                    newOperand(OP_VARIABLE, _newString(root->child[0]->ID_NAME)),
+                    _getSize(sym_type->data.arr.size));
+        }
     } else {
         _translateVarDec(root->child[0], place);
     } 
@@ -163,7 +149,6 @@ static inline void _translateStmtList(Node root){
 
 // 对 Stmt 进行分析
 static inline void _translateStmt(Node root){
-    // TODO: 代码核心部分
     assert(root != NULL);
     // 对不同情况进行解析
     if (!strcmp(root->child[0]->name, "Exp")){
@@ -175,7 +160,237 @@ static inline void _translateStmt(Node root){
 
 // 对 Exp 进行分析
 static inline void _translateExp(Node root, pOperand place){
-    // TODO: 代码核心部分
+
+    assert(root != NULL);
+
+    // Exp -> LP Exp RP
+    if (!strcmp(root->child[0]->name, "LP")){
+        _translateExp(root->child[1], place);
+    }
+
+    else if (!strcmp(root->child[0]->name, "Exp") || !strcmp(root->child[0]->name, "NOT")) {
+        // 条件表达式 和 基本表达式
+        if (strcmp(root->child[1]->name, "LB") && strcmp(root->child[1]->name, "DOT")) {
+            // Exp -> Exp AND Exp
+            //      | Exp OR Exp
+            //      | Exp RELOP Exp
+            //      | NOT Exp
+            if (!strcmp(root->child[1]->name, "AND") || !strcmp(root->child[1]->name, "OR") ||
+                !strcmp(root->child[1]->name, "RELOP") || !strcmp(root->child[0]->name, "NOT")) {
+                pOperand label1 = _newLabel();
+                pOperand label2 = _newLabel();
+                pOperand true_num = newOperand(OP_CONSTANT, 1);
+                pOperand false_num = newOperand(OP_CONSTANT, 0);
+                genInterCode(IR_ASSIGN, place, false_num);
+                _translateCond(root, label1, label2);
+                genInterCode(IR_LABEL, label1);
+                genInterCode(IR_ASSIGN, place, true_num);
+            } else {
+                // Exp -> Exp ASSIGNOP Exp
+                if (!strcmp(root->child[1]->name, "ASSIGNOP")) {
+                    pOperand t1 = newTemp();
+                    _translateExp(root->child[0], t1);
+                    pOperand t2 = newTemp();
+                    printf("Here\n");
+                    _translateExp(root->child[2], t2);
+                    genInterCode(IR_ASSIGN, t1, t2);
+                } else {
+                    pOperand t1 = newTemp();
+                    _translateExp(root->child[0], t1);
+                    pOperand t2 = newTemp();
+                    _translateExp(root->child[2], t2);
+                    // Exp -> Exp PLUS Exp
+                    if (!strcmp(root->child[1]->name, "PLUS")) {
+                        genInterCode(IR_ADD, place, t1, t2);
+                    }
+                    // Exp -> Exp MINUS Exp
+                    else if (!strcmp(root->child[1]->name, "MINUS")) {
+                        genInterCode(IR_SUB, place, t1, t2);
+                    }
+                    // Exp -> Exp STAR Exp
+                    else if (!strcmp(root->child[1]->name, "STAR")) {
+                        genInterCode(IR_MUL, place, t1, t2);
+                    }
+                    // Exp -> Exp DIV Exp
+                    else if (!strcmp(root->child[1]->name, "DIV")) {
+                        genInterCode(IR_DIV, place, t1, t2);
+                    }
+                }
+            }
+
+        }
+        // 数组和结构体访问
+        else {
+            // Exp -> Exp LB Exp RB
+            if (!strcmp(root->child[1]->name, "LB")) {
+                //数组
+                pOperand idx = newTemp();
+                _translateExp(root->child[2], idx);
+                pOperand base = newTemp();
+                _translateExp(root->child[0], base);
+                pOperand width;
+                pOperand offset = newTemp();
+                pOperand target;
+                // 根据假设，Exp1只会展开为 Exp DOT ID 或 ID
+                // 我们让前一种情况吧ID作为name回填进place返回到这里的base处，在语义分析时将结构体变量也填进表（因为假设无重名），这样两种情况都可以查表得到。
+                symbol_node tar = createSymbolNode();
+                tar->name = root->child[0]->ID_NAME;
+                symbol_node item = findRecord(symTableList, tar);
+                assert(item->symbolType->kind == ARRAY);
+                width = newOperand(
+                    OP_CONSTANT, _getSize(item->symbolType->data.arr.arr_type));
+                genInterCode(IR_MUL, offset, idx, width);
+                // 如果是ID[Exp],
+                // 则需要对ID取址，如果前面是结构体内访问，则会返回一个地址类型，不需要再取址
+                if (base->kind == OP_VARIABLE) {
+                // printf("非结构体数组访问\n");
+                target = newTemp();
+                genInterCode(IR_GET_ADDR, target, base);
+                } else {
+                // printf("结构体数组访问\n");
+                    target = base;
+                }
+                genInterCode(IR_ADD, place, target, offset);
+                place->kind = OP_ADDRESS;
+                interCodeList->lastArrayName = base->u.name;
+            }
+            // Exp -> Exp DOT ID
+            else {
+                //结构体
+                pOperand temp = newTemp();
+                _translateExp(root->child[0], temp);
+                // 两种情况，Exp直接为一个变量，则需要先取址，若Exp为数组或者多层结构体访问或结构体形参，则target会被填成地址，可以直接用。
+                pOperand target;
+
+                if (temp->kind == OP_ADDRESS) {
+                    target = newOperand(temp->kind, temp->u.name);
+                    // target->isAddr = TRUE;
+                } else {
+                    target = newTemp();
+                    genInterCode(IR_GET_ADDR, target, temp);
+                }
+
+                pOperand id = newOperand(
+                    OP_VARIABLE, _newString(root->child[2]->ID_NAME));
+                int offset = 0;
+                symbol_node tar = createSymbolNode();
+                tar->name = root->child[0]->ID_NAME;
+                symbol_node item = findRecord(symTableList, tar);
+                // //结构体数组，temp是临时变量，查不到表，需要用处理数组时候记录下的数组名老查表
+                // if (item == NULL) {
+                //     item = searchTableItem(table, interCodeList->lastArrayName);
+                // }
+
+                // pFieldList tmp;
+                // // 结构体数组 eg: a[5].b
+                // if (item->field->type->kind == ARRAY) {
+                //     tmp = item->field->type->u.array.elem->u.structure.field;
+                // }
+                // // 一般结构体
+                // else {
+                //     tmp = item->field->type->u.structure.field;
+                // }
+                // // 遍历获得offset
+                // while (tmp) {
+                //     if (!strcmp(tmp->name, id->u.name)) break;
+                //     offset += getSize(tmp->type);
+                //     tmp = tmp->tail;
+                // }
+                // pOperand tOffset = newOperand(OP_CONSTANT, offset);
+                // if (place) {
+                //     genInterCode(IR_ADD, place, target, tOffset);
+                //     // 为了处理结构体里的数组把id名通过place回传给上层
+                //     setOperand(place, OP_ADDRESS, (void*)newString(id->u.name));
+                //     // place->isAddr = TRUE;
+                // }
+            }
+        }
+    }
+    //单目运算符
+    // Exp -> MINUS Exp
+    else if (!strcmp(root->child[0]->name, "MINUS")) {
+        pOperand t1 = newTemp();
+        _translateExp(root->child[1], t1);
+        pOperand zero = newOperand(OP_CONSTANT, 0);
+        genInterCode(IR_SUB, place, zero, t1);
+    } else if (!strcmp(root->child[0]->name, "ID") && root->child[1]) {
+        pOperand funcTemp =
+            newOperand(OP_FUNCTION, _newString(root->child[0]->ID_NAME));
+        // Exp -> ID LP Args RP
+        if (!strcmp(root->child[2]->name, "Args")) {
+            pArgList argList = _newArgList();
+            _translateArgs(root->child[2], argList);
+            if (!strcmp(root->child[0]->name, "write")) {
+                genInterCode(IR_WRITE, argList->head->op);
+            } else {
+                pArg argTemp = argList->head;
+                while (argTemp) {
+                    if (argTemp->op == OP_VARIABLE) {
+                        symbol_node tar = createSymbolNode();
+                        tar->name = root->child[0]->ID_NAME;
+                        symbol_node item = findRecord(symTableList, tar);
+
+                        // 结构体作为参数需要传址
+                        if (item && item->symbolType->kind == STRUCTURE) {
+                            pOperand varTemp = newTemp();
+                            genInterCode(IR_GET_ADDR, varTemp, argTemp->op);
+                            pOperand varTempCopy =
+                                newOperand(OP_ADDRESS, varTemp->u.name);
+                            genInterCode(IR_ARG, varTempCopy);
+                        }
+                    }
+                    // 一般参数直接传值
+                    else {
+                        genInterCode(IR_ARG, argTemp->op);
+                    }
+                    argTemp = argTemp->next;
+                }
+                if (place) {
+                    genInterCode(IR_CALL, place, funcTemp);
+                } else {
+                    pOperand temp = newTemp();
+                    genInterCode(IR_CALL, temp, funcTemp);
+                }
+            }
+        }
+        // Exp -> ID LP RP
+        else {
+            if (!strcmp(root->child[0]->ID_NAME, "read")) {
+                genInterCode(IR_READ, place);
+            } else {
+                if (place) {
+                    genInterCode(IR_CALL, place, funcTemp);
+                } else {
+                    pOperand temp = newTemp();
+                    genInterCode(IR_CALL, temp, funcTemp);
+                }
+            }
+        }
+    }
+    // Exp -> ID
+    else if (!strcmp(root->child[0]->name, "ID")) {
+        symbol_node tar = createSymbolNode();
+        tar->name = root->child[0]->ID_NAME;
+        symbol_node item = findRecord(symTableList, tar);
+        // 根据讲义，因为结构体不允许赋值，结构体做形参时是传址的方式
+        interCodeList->tempVarNum--;
+        if (item->symbolType->kind == STRUCTURE) {
+            setOperand(place, OP_ADDRESS, (void*)_newString(root->child[0]->ID_NAME));
+        }
+        // 非结构体参数情况都当做变量处理
+        else {
+            setOperand(place, OP_VARIABLE, (void*)_newString(root->child[0]->ID_NAME));
+        }
+    } else {
+        // TODO: 这里本身是处理 INT 和 FLOAT，但是 Exp 不能直接通过调用自己来处理 INT
+        interCodeList->tempVarNum--;
+        setOperand(place, OP_CONSTANT, (void*)atoi(root->child[0]->ID_NAME));
+    }
+}
+
+// 对 Cond 的分析
+static inline void _translateCond(Node root, pOperand labelTrue, pOperand labelFalse){
+
 }
 
 // Op 相关代码
@@ -585,7 +800,6 @@ void genInterCode(int kind, ...){
             addInterCode(interCodeList, newCode);
             break;
         case IR_DEC:
-            // TODO:
             va_start(vaList, 2);
             op1 = va_arg(vaList, pOperand);
             size = va_arg(vaList, int);
@@ -593,7 +807,6 @@ void genInterCode(int kind, ...){
             addInterCode(interCodeList, newCode);
             break;
         case IR_IF_GOTO:
-            // TODO:
             va_start(vaList, 4);
             result = va_arg(vaList, pOperand);
             relop = va_arg(vaList, pOperand);
@@ -656,4 +869,59 @@ static inline char* _newString(char* src){
     assert(p != NULL);
     strncpy(p, src, length);
     return p;
+}
+
+// 获取变量所占空间大小
+static inline int _getSize(type sym_type) {
+    if (sym_type == NULL){
+        return 0;
+    }
+    else if (sym_type->kind == BASIC){
+        return 4;
+    }
+    else if (sym_type->kind == ARRAY){
+        return sym_type->data.arr.size * _getSize(sym_type->data.arr.arr_type);
+    }
+    return 0;
+}
+
+void setOperand(pOperand p, int kind, void* val){
+    assert(p != NULL);
+    assert(kind >= 0 && kind < 6);
+    p->kind = kind;
+    switch (kind) {
+        case OP_CONSTANT:
+            p->u.value = (int)val;
+            break;
+        case OP_VARIABLE:
+        case OP_ADDRESS:
+        case OP_LABEL:
+        case OP_FUNCTION:
+        case OP_RELOP:
+            // if (p->u.name) free(p->u.name);
+            p->u.name = (char*)val;
+            break;
+    }
+}
+
+// 对 Args 的分析
+static inline void _translateArgs(Node root, pArgList argList){
+
+}
+
+// 创建一个 ArgList
+static inline pArgList _newArgList(){
+    pArgList p = (pArgList)malloc(sizeof(ArgList));
+    assert(p != NULL);
+    p->head = NULL;
+    p->cur = NULL;
+}
+
+// 创建一个新的 label
+static inline pOperand _newLabel(){
+    char lName[10] = {0};
+    sprintf(lName, "label%d", interCodeList->labelNum);
+    interCodeList->labelNum++;
+    pOperand temp = newOperand(OP_LABEL, _newString(lName));
+    return temp;
 }
