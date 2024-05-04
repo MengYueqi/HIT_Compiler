@@ -20,6 +20,15 @@ symbol_node createSymbolNode(){
 // 初始化变量表
 static inline void _initSymbolList(){
     head = createSymbolNode();
+    symbol_node read = createSymbolNode();
+    read->name = "read";
+    printf("Here\n");
+    read->symbolType = _createType(FUNCTION, 2, NULL, NULL);
+    symbol_node write = createSymbolNode();
+    write->name = "write";
+    write->symbolType = _createType(FUNCTION, 2, NULL, NULL);
+    _addRecord(read);
+    _addRecord(write);
 }
 
 // 打印变量表

@@ -124,6 +124,7 @@ static inline void _translateVarDec(Node root, pOperand place){
         symbol_node tar = createSymbolNode();
         tar->name = root->child[0]->ID_NAME;
         symbol_node temp = findRecord(symTableList, tar);
+        assert(tar != NULL && temp != NULL);
         type sym_type = temp->symbolType;
         if (sym_type->kind == BASIC) {
             if (place) {
@@ -292,7 +293,7 @@ static inline void _translateExp(Node root, pOperand place){
                 symbol_node tar = createSymbolNode();
                 tar->name = root->child[0]->ID_NAME;
                 symbol_node item = findRecord(symTableList, tar);
-                assert(item->symbolType->kind == ARRAY);
+                assert(item != NULL && item->symbolType->kind == ARRAY);
                 width = newOperand(
                     OP_CONSTANT, _getSize(item->symbolType->data.arr.arr_type));
                 genInterCode(IR_MUL, offset, idx, width);
@@ -376,7 +377,8 @@ static inline void _translateExp(Node root, pOperand place){
         if (!strcmp(root->child[2]->name, "Args")) {
             pArgList argList = _newArgList();
             _translateArgs(root->child[2], argList);
-            if (!strcmp(root->child[0]->name, "write")) {
+            if (!strcmp(root->child[0]->ID_NAME, "write")) {
+                // TODO: 这里要看一下怎么回事
                 genInterCode(IR_WRITE, argList->head->op);
             } else {
                 pArg argTemp = argList->head;
@@ -385,6 +387,7 @@ static inline void _translateExp(Node root, pOperand place){
                         symbol_node tar = createSymbolNode();
                         tar->name = root->child[0]->ID_NAME;
                         symbol_node item = findRecord(symTableList, tar);
+                        assert(item != NULL);
 
                         // 结构体作为参数需要传址
                         if (item && item->symbolType->kind == STRUCTURE) {
@@ -428,6 +431,7 @@ static inline void _translateExp(Node root, pOperand place){
         symbol_node tar = createSymbolNode();
         tar->name = root->child[0]->ID_NAME;
         symbol_node item = findRecord(symTableList, tar);
+        assert(item != NULL);
         // 根据讲义，因为结构体不允许赋值，结构体做形参时是传址的方式
         interCodeList->tempVarNum--;
         if (item->symbolType->kind == STRUCTURE) {
@@ -438,9 +442,14 @@ static inline void _translateExp(Node root, pOperand place){
             setOperand(place, OP_VARIABLE, (void*)_newString(root->child[0]->ID_NAME));
         }
     } else {
-        // TODO: 这里本身是处理 INT 和 FLOAT，但是 Exp 不能直接通过调用自己来处理 INT
         interCodeList->tempVarNum--;
-        setOperand(place, OP_CONSTANT, (void*)atoi(root->child[0]->ID_NAME));
+        printf("INTI: %d\n", root->child[0]->INT_NUM);
+        if (!strcmp(root->child[0]->name, "INT")){
+            setOperand(place, OP_CONSTANT, (void*)root->child[0]->INT_NUM);
+        } else if (!strcmp(root->child[0]->name, "FLOAT")){
+            // TODO: FLOAT 这里还没改
+            // setOperand(place, OP_CONSTANT, (void*)root->child[0]->FLOAT_NUM);
+        }
     }
 }
 
