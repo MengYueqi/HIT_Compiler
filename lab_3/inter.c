@@ -3,10 +3,15 @@
 # include <assert.h>
 # include <stdarg.h>
 
+int count = 0;
 
 // 向外暴露接口
 void genInter(Node root){
     genInterCodes(root);
+    FILE* fw = fopen("./log.out", "wt+");
+    if (!fw) {
+        return;
+    }
     printInterCode(NULL, interCodeList);
 }
 
@@ -191,8 +196,8 @@ static inline void _translateExp(Node root, pOperand place){
                     pOperand t1 = newTemp();
                     _translateExp(root->child[0], t1);
                     pOperand t2 = newTemp();
-                    printf("Here\n");
                     _translateExp(root->child[2], t2);
+                    printf("ASS: %s\n\n", t2->u.name);
                     genInterCode(IR_ASSIGN, t1, t2);
                 } else {
                     pOperand t1 = newTemp();
@@ -444,6 +449,7 @@ pOperand newOperand(int kind, ...){
         case OP_FUNCTION:
         case OP_RELOP:
             p->u.name = va_arg(vaList, char*);
+            printf("Here: %s\n", p->u.name);
             break;
     }
     // p->isAddr = FALSE;
@@ -784,8 +790,12 @@ void genInterCode(int kind, ...){
         case IR_DIV:
             va_start(vaList, 3);
             result = va_arg(vaList, pOperand);
+            // TODO: 这里申请临时变量的函数可能出现问题
+            // result->u.name = "t";
+            // printf("result: %s\n", result->u.name);
             op1 = va_arg(vaList, pOperand);
             op2 = va_arg(vaList, pOperand);
+            // printf("1: %s 2: %s 3: %s", result->u.name, op1->u.name, op2->u.name);
             if (op1->kind == OP_ADDRESS) {
                 temp = newTemp();
                 genInterCode(IR_READ_ADDR, temp, op1);
@@ -833,10 +843,12 @@ void addInterCode(pInterCodeList interCodeList, pInterCodes newCode){
 // 中间类型的函数
 pOperand newTemp(){
     // printf("newTemp() tempVal:%d\n", interCodeList->tempVarNum);
-    char tName[10] = {0};
-    sprintf(tName, "t%d", interCodeList->tempVarNum);
-    interCodeList->tempVarNum++;
-    pOperand temp = newOperand(OP_VARIABLE, tName);
+    // interCodeList->tempVarNum++;
+    char name[10] = "";
+    sprintf(name, "t%d", count++);
+    printf("%s\n", name);
+    pOperand temp = newOperand(OP_VARIABLE, name);
+    temp->u.name = name;
     return temp;
 }
 
@@ -906,7 +918,7 @@ void setOperand(pOperand p, int kind, void* val){
 
 // 对 Args 的分析
 static inline void _translateArgs(Node root, pArgList argList){
-
+    // TODO: 核心部分
 }
 
 // 创建一个 ArgList
