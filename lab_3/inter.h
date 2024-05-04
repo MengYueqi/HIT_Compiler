@@ -116,6 +116,8 @@ void addInterCode(pInterCodeList interCodeList, pInterCodes newCode);
 void genInterCodes(Node root);
 pInterCodes newInterCodes(pInterCode code);
 pOperand newTemp();
+static inline pArg _newArg(pOperand op);
+static inline void _addArg(pArgList argList, pArg arg);
 static inline int _getSize(type sym_type);
 static inline void _translateExtDefList(Node root);
 static inline void _translateExp(Node root, pOperand place);

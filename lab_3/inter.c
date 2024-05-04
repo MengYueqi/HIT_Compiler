@@ -219,6 +219,8 @@ static inline void _translateStmt(Node root){
 static inline void _translateExp(Node root, pOperand place){
 
     assert(root != NULL);
+    // printf("Here\n");
+    // printf("rootC: %s\n", root->child[0]->name);
 
     // Exp -> LP Exp RP
     if (!strcmp(root->child[0]->name, "LP")){
@@ -975,6 +977,42 @@ void setOperand(pOperand p, int kind, void* val){
 // 对 Args 的分析
 static inline void _translateArgs(Node root, pArgList argList){
     // TODO: 核心部分
+    assert(root != NULL);
+    assert(argList != NULL);
+    // Args -> Exp COMMA Args
+    //       | Exp
+
+    // Args -> Exp
+    pArg temp = _newArg(newTemp());
+    printf("Hqq\n");
+    printf("Child: %d", root->line);
+    _translateExp(root->child[0], temp->op);
+
+    _addArg(argList, temp);
+
+    // Args -> Exp COMMA Args
+    if (root->num_child != 1) {
+        _translateArgs(root->child[2], argList);
+    }
+}
+
+// 添加 Arg 到 List 中
+static inline void _addArg(pArgList argList, pArg arg){
+    if (argList->head == NULL) {
+        argList->head = arg;
+        argList->cur = arg;
+    } else {
+        argList->cur->next = arg;
+        argList->cur = arg;
+    }
+}
+
+// 创建一个新的 Arg 表
+static inline pArg _newArg(pOperand op){
+    pArg p = (pArg)malloc(sizeof(Arg));
+    assert(p != NULL);
+    p->op = op;
+    p->next = NULL;
 }
 
 // 创建一个 ArgList
