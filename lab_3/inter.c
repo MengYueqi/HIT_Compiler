@@ -378,10 +378,16 @@ static inline void _translateExp(Node root, pOperand place){
         // Exp -> ID LP Args RP
         if (!strcmp(root->child[2]->name, "Args")) {
             pArgList argList = _newArgList();
-            _translateArgs(root->child[2], argList);
+            // _translateArgs(root->child[2], argList);
+            // printf("Child: %s", root->child[2]->name);
             if (!strcmp(root->child[0]->ID_NAME, "write")) {
+                // Args -> Exp
+                pArg temp = _newArg(newTemp());
+                printf("Hqq\n");
+                // _translateExp(root->child[2]->child[0], temp->op);
+                // _addArg(argList, temp);
                 // TODO: 这里要看一下怎么回事
-                genInterCode(IR_WRITE, argList->head->op);
+                genInterCode(IR_WRITE, newOperand(OP_CONSTANT, root->child[2]->child[0]->INT_NUM));
             } else {
                 pArg argTemp = argList->head;
                 while (argTemp) {
