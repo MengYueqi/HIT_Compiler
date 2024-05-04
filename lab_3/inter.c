@@ -156,10 +156,60 @@ static inline void _translateStmtList(Node root){
 static inline void _translateStmt(Node root){
     assert(root != NULL);
     // 对不同情况进行解析
+
+    // Exp SEMI
     if (!strcmp(root->child[0]->name, "Exp")){
         _translateExp(root->child[0], NULL);
-    } else if (!strcmp(root->child[0]->name, "CompSt")){
+    } 
+    
+    // CompSt
+    else if (!strcmp(root->child[0]->name, "CompSt")){
         _translateCompSt(root->child[0]);
+    } 
+    
+    // RETURN Exp SEMI
+    else if (!strcmp(root->child[0]->name, "RETURN")) {
+        pOperand t1 = newTemp();
+        _translateExp(root->child[1], t1);
+        genInterCode(IR_RETURN, t1);
+    }
+
+    // IF LP Exp RP Stmt
+    else if (!strcmp(root->child[0]->name, "IF")) {
+        Node exp = root->child[2];
+        Node stmt = root->child[4];
+        pOperand label1 = _newLabel();
+        pOperand label2 = _newLabel();
+
+        _translateCond(exp, label1, label2);
+        genInterCode(IR_LABEL, label1);
+        _translateStmt(stmt);
+        if (root->num_child == 5) {
+            genInterCode(IR_LABEL, label2);
+        }
+        // IF LP Exp RP Stmt ELSE Stmt
+        else {
+            pOperand label3 = _newLabel();
+            genInterCode(IR_GOTO, label3);
+            genInterCode(IR_LABEL, label2);
+            _translateStmt(root->child[6]);
+            genInterCode(IR_LABEL, label3);
+        }
+
+    }
+
+    // WHILE LP Exp RP Stmt
+    else if (!strcmp(root->child[0]->name, "WHILE")) {
+        pOperand label1 = newLabel();
+        pOperand label2 = newLabel();
+        pOperand label3 = newLabel();
+
+        genInterCode(IR_LABEL, label1);
+        _translateCond(root->child[2], label2, label3);
+        genInterCode(IR_LABEL, label2);
+        _translateStmt(root->child[4]);
+        genInterCode(IR_GOTO, label1);
+        genInterCode(IR_LABEL, label3);
     }
 }
 
@@ -790,12 +840,8 @@ void genInterCode(int kind, ...){
         case IR_DIV:
             va_start(vaList, 3);
             result = va_arg(vaList, pOperand);
-            // TODO: 这里申请临时变量的函数可能出现问题
-            // result->u.name = "t";
-            // printf("result: %s\n", result->u.name);
             op1 = va_arg(vaList, pOperand);
             op2 = va_arg(vaList, pOperand);
-            // printf("1: %s 2: %s 3: %s", result->u.name, op1->u.name, op2->u.name);
             if (op1->kind == OP_ADDRESS) {
                 temp = newTemp();
                 genInterCode(IR_READ_ADDR, temp, op1);
