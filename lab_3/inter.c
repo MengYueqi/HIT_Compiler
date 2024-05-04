@@ -145,9 +145,10 @@ static inline void _translateVarDec(Node root, pOperand place){
 // 对 StmtList 进行分析
 static inline void _translateStmtList(Node root){
     assert(root != NULL);
-    for (int i = 0; i < root->num_child; i++){
-        if (!strcmp(root->child[i]->name, "Stmt")){
-            _translateStmt(root->child[i]);
+    while (root->num_child == 2){
+        if (!strcmp(root->child[0]->name, "Stmt")){
+            _translateStmt(root->child[0]);
+            root = root->child[1];
         }
     }
 }
@@ -200,9 +201,9 @@ static inline void _translateStmt(Node root){
 
     // WHILE LP Exp RP Stmt
     else if (!strcmp(root->child[0]->name, "WHILE")) {
-        pOperand label1 = newLabel();
-        pOperand label2 = newLabel();
-        pOperand label3 = newLabel();
+        pOperand label1 = _newLabel();
+        pOperand label2 = _newLabel();
+        pOperand label3 = _newLabel();
 
         genInterCode(IR_LABEL, label1);
         _translateCond(root->child[2], label2, label3);
@@ -499,7 +500,7 @@ pOperand newOperand(int kind, ...){
         case OP_FUNCTION:
         case OP_RELOP:
             p->u.name = va_arg(vaList, char*);
-            printf("Here: %s\n", p->u.name);
+            // printf("Here: %s\n", p->u.name);
             break;
     }
     // p->isAddr = FALSE;
@@ -892,7 +893,7 @@ pOperand newTemp(){
     // interCodeList->tempVarNum++;
     char name[10] = "";
     sprintf(name, "t%d", count++);
-    printf("%s\n", name);
+    // printf("%s\n", name);
     pOperand temp = newOperand(OP_VARIABLE, name);
     temp->u.name = name;
     return temp;
