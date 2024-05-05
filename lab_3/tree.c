@@ -42,7 +42,7 @@ Node newNode(char *name, int num_child, int line, Node childList[]){
         str = (char *)malloc(sizeof(char) * 40);
         strcpy(str, yytext);
         node->ID_NAME = str;
-    } else if (!strcmp(name, "ID")){
+    } else if (!strcmp(name, "ID") || !strcmp(name, "RELOP")){
         char *str;
         str = (char *)malloc(sizeof(char) * 40);
         strcpy(str, yytext);

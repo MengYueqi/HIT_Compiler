@@ -217,7 +217,6 @@ static inline void _translateStmt(Node root){
 
 // 对 Exp 进行分析
 static inline void _translateExp(Node root, pOperand place){
-
     assert(root != NULL);
     // printf("Here\n");
     // printf("rootC: %s\n", root->child[0]->name);
@@ -251,7 +250,7 @@ static inline void _translateExp(Node root, pOperand place){
                     _translateExp(root->child[0], t1);
                     pOperand t2 = newTemp();
                     _translateExp(root->child[2], t2);
-                    printf("ASS: %s\n\n", t2->u.name);
+                    // printf("ASS: %s\n\n", t2->u.name);
                     genInterCode(IR_ASSIGN, t1, t2);
                 } else {
                     pOperand t1 = newTemp();
@@ -372,18 +371,20 @@ static inline void _translateExp(Node root, pOperand place){
         _translateExp(root->child[1], t1);
         pOperand zero = newOperand(OP_CONSTANT, 0);
         genInterCode(IR_SUB, place, zero, t1);
-    } else if (!strcmp(root->child[0]->name, "ID") && root->child[1]) {
+    } else if (!strcmp(root->child[0]->name, "ID") && root->num_child != 1) {
         pOperand funcTemp =
             newOperand(OP_FUNCTION, _newString(root->child[0]->ID_NAME));
         // Exp -> ID LP Args RP
         if (!strcmp(root->child[2]->name, "Args")) {
             pArgList argList = _newArgList();
-            // _translateArgs(root->child[2], argList);
+            // TODO: 这里只写了一个参数的，两个及以上的没有写
+            pArg temp = _newArg(newTemp());
+            _translateExp(root->child[2]->child[0], temp->op);
+            _addArg(argList, temp);
             // printf("Child: %s", root->child[2]->name);
             if (!strcmp(root->child[0]->ID_NAME, "write")) {
                 // Args -> Exp
                 pArg temp = _newArg(newTemp());
-                printf("Hqq\n");
                 // _translateExp(root->child[2]->child[0], temp->op);
                 // _addArg(argList, temp);
                 // TODO: 这里要看一下怎么回事
@@ -451,7 +452,7 @@ static inline void _translateExp(Node root, pOperand place){
         }
     } else {
         interCodeList->tempVarNum--;
-        printf("INTI: %d\n", root->child[0]->INT_NUM);
+        // printf("INTI: %d\n", root->child[0]->INT_NUM);
         if (!strcmp(root->child[0]->name, "INT")){
             setOperand(place, OP_CONSTANT, (void*)root->child[0]->INT_NUM);
         } else if (!strcmp(root->child[0]->name, "FLOAT")){
@@ -463,7 +464,69 @@ static inline void _translateExp(Node root, pOperand place){
 
 // 对 Cond 的分析
 static inline void _translateCond(Node root, pOperand labelTrue, pOperand labelFalse){
+    assert(root != NULL);
+    // Exp -> Exp AND Exp
+    //      | Exp OR Exp
+    //      | Exp RELOP Exp
+    //      | NOT Exp
 
+    // Exp -> NOT Exp
+    if (!strcmp(root->child[0]->name, "NOT")) {
+        _translateCond(root->child[1], labelFalse, labelTrue);
+    }
+    // Exp -> Exp RELOP Exp
+    else if (!strcmp(root->child[1]->name, "RELOP")) {
+        pOperand t1 = newTemp();
+        pOperand t2 = newTemp();
+        _translateExp(root->child[0], t1);
+        _translateExp(root->child[2], t2);
+
+        pOperand relop =
+            newOperand(OP_RELOP, _newString(root->child[1]->ID_NAME));
+
+        if (t1->kind == OP_ADDRESS) {
+            pOperand temp = newTemp();
+            genInterCode(IR_READ_ADDR, temp, t1);
+            t1 = temp;
+        }
+        if (t2->kind == OP_ADDRESS) {
+            pOperand temp = newTemp();
+            genInterCode(IR_READ_ADDR, temp, t2);
+            t2 = temp;
+        }
+
+        genInterCode(IR_IF_GOTO, t1, relop, t2, labelTrue);
+        genInterCode(IR_GOTO, labelFalse);
+    }
+    // Exp -> Exp AND Exp
+    else if (!strcmp(root->child[1]->name, "AND")) {
+        pOperand label1 = _newLabel();
+        _translateCond(root->child[0], label1, labelFalse);
+        genInterCode(IR_LABEL, label1);
+        _translateCond(root->child[2], labelTrue, labelFalse);
+    }
+    // Exp -> Exp OR Exp
+    else if (!strcmp(root->child[1]->name, "OR")) {
+        pOperand label1 = _newLabel();
+        _translateCond(root->child[0], labelTrue, label1);
+        genInterCode(IR_LABEL, label1);
+        _translateCond(root->child[2], labelTrue, labelFalse);
+    }
+    // other cases
+    else {
+        pOperand t1 = newTemp();
+        _translateExp(root, t1);
+        pOperand t2 = newOperand(OP_CONSTANT, 0);
+        pOperand relop = newOperand(OP_RELOP, _newString("!="));
+
+        if (t1->kind == OP_ADDRESS) {
+            pOperand temp = newTemp();
+            genInterCode(IR_READ_ADDR, temp, t1);
+            t1 = temp;
+        }
+        genInterCode(IR_IF_GOTO, t1, relop, t2, labelTrue);
+        genInterCode(IR_GOTO, labelFalse);
+    }
 }
 
 // Op 相关代码
@@ -908,11 +971,23 @@ void addInterCode(pInterCodeList interCodeList, pInterCodes newCode){
 pOperand newTemp(){
     // printf("newTemp() tempVal:%d\n", interCodeList->tempVarNum);
     // interCodeList->tempVarNum++;
-    char name[10] = "";
+    // char name[10] = "";
+    // TODO: 不知道什么原因正常的字符串拼接不好使，想了这么一个绥靖政策
+    char* name[50] = {"t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9" \ 
+    "t10", "t11", "t12", "t13", "t14", "t15", "t16", "t17", "t18", "t19" \
+    "t20", "t21", "t22", "t23", "t24", "t25", "t26", "t27", "t28", "t29" \
+    "t30", "t31", "t32", "t33", "t34", "t35", "t36", "t37", "t38", "t39" \
+    "t40", "t41", "t42", "t43", "t44", "t45", "t46", "t47", "t48", "t49" \
+    };
     sprintf(name, "t%d", count++);
     // printf("%s\n", name);
     pOperand temp = newOperand(OP_VARIABLE, name);
-    temp->u.name = name;
+    // temp->u.name = name;
+    // strcat(name, "1");
+    // temp->u.name = "t1";
+    temp->u.name = name[count];
+    count++;
+    // printf("%d\n", count);
     return temp;
 }
 
@@ -990,8 +1065,7 @@ static inline void _translateArgs(Node root, pArgList argList){
 
     // Args -> Exp
     pArg temp = _newArg(newTemp());
-    printf("Hqq\n");
-    printf("Child: %d", root->line);
+    // printf("Child: %d", root->line);
     _translateExp(root->child[0], temp->op);
 
     _addArg(argList, temp);
@@ -1019,6 +1093,7 @@ static inline pArg _newArg(pOperand op){
     assert(p != NULL);
     p->op = op;
     p->next = NULL;
+    return p;
 }
 
 // 创建一个 ArgList
@@ -1027,6 +1102,7 @@ static inline pArgList _newArgList(){
     assert(p != NULL);
     p->head = NULL;
     p->cur = NULL;
+    return p;
 }
 
 // 创建一个新的 label
