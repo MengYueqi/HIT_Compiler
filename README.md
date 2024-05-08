@@ -164,8 +164,9 @@ gcc -Wall lex.yy.c tree.c syntax.tab.c semantic.c main.c -o parser -ll
 你也可以逐步进行编译，并查看编译的结果。
 
 ## 实验3: 中间代码生成
-实验 3 的内容为完成一个中间代码生成器。由于课上讲的内容和实验需要完成的内容有较大差别，实验 3 的中间代码生成器为 [NJU 学长](https://github.com/Tyler-ytr/Compiler)的像素级复刻（在这里感谢 NJU Tyler-ytr 学长），仅供大家参考。
-大家完成中间代码后，如果需要测试的话，可以使用哈工大学长的[这个项目](https://github.com/ErnestThePoet/ir-virtual-machine?tab=readme-ov-file)。在线上即可完成中间代码的测试，非常方便。
+实验 3 的内容为完成一个中间代码生成器。由于课上讲的内容和实验需要完成的内容有较大差别，实验 3 的中间代码生成器为 [NJU 学长](https://github.com/Tyler-ytr/Compiler) 的像素级复刻（在这里感谢 NJU Tyler-ytr 学长），仅供大家参考。
+
+大家完成中间代码后，如果需要测试的话，可以使用哈工大学长的 [这个项目](https://github.com/ErnestThePoet/ir-virtual-machine?tab=readme-ov-file)。在线上即可完成中间代码的测试，非常方便。
 
 ### 编译过程说明
 *实验 3 建议大家在 Linux 环境下进行编译（Makefile 可以自动识别环境），如果选择在 MacOS 下进行编译，在变量输出的时候可能会出现无法显示的问题。*
