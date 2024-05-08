@@ -12,6 +12,7 @@
 实验 1 为使用 GNU Flex 和 GNU Bison 完成词法分析和语法分析。其中文法定义参考[文法定义](./syntax_definition.md)。这是一个非常非常老的编译器编写方式，而且不是很好上手。以下对代码进行简单介绍，希望能帮学弟学妹们快速上手。
 
 首先，代码的架构如下：
+
 ```
 .
 ├── Makefile
@@ -164,12 +165,124 @@ gcc -Wall lex.yy.c tree.c syntax.tab.c semantic.c main.c -o parser -ll
 你也可以逐步进行编译，并查看编译的结果。
 
 ## 实验3: 中间代码生成
-实验 3 的内容为完成一个中间代码生成器。由于课上讲的内容和实验需要完成的内容有较大差别，实验 3 的中间代码生成器为 [NJU 学长](https://github.com/Tyler-ytr/Compiler) 的像素级复刻（在这里感谢 NJU Tyler-ytr 学长），仅供大家参考。
+实验 3 的内容为完成一个中间代码生成器。由于课上讲的内容和实验需要完成的内容有较大差别，实验 3 的中间代码生成器为 [NJU 学长](https://github.com/Tyler-ytr/Compiler)的像素级复刻（在这里感谢 NJU Tyler-ytr 学长），仅供大家参考。
 
-大家完成中间代码后，如果需要测试的话，可以使用哈工大学长的 [这个项目](https://github.com/ErnestThePoet/ir-virtual-machine?tab=readme-ov-file)。在线上即可完成中间代码的测试，非常方便。
+大家完成中间代码后，如果需要测试的话，可以使用哈工大学长的[这个项目](https://github.com/ErnestThePoet/ir-virtual-machine?tab=readme-ov-file)。在线上即可完成中间代码的测试，非常方便。
+
+实验 3 的具体代码结构如下：
+
+```
+.
+├── Makefile
+├── inter.c  中间代码生成实现文件
+├── inter.h  中间代码生成头文件
+├── lex.l
+├── lex.yy.c
+├── main.c
+├── parser
+├── parser.h
+├── semantic.c
+├── semantic.h
+├── syntax.tab.c
+├── syntax.tab.h
+├── syntax.y
+├── test
+└── tree.c
+```
+
+
+
+### `inter`文件
+
+在 `inter.c` 文件中，实现了中间代码生成的主要部分。其中，向外暴露了函数接口 `genInter` 在 `main` 文件中通过调用此接口来进行中间代码生成。在 `genInter` 函数中，首先对高级语言进行分析，生成对应的中间代码 List，之后，再调用输出函数，对中间代码进行格式化输出。这里中间代码节点主要存储在如下数据结构中：
+
+```c
+typedef struct _interCode {
+    enum {
+        IR_LABEL,
+        IR_FUNCTION,
+        IR_ASSIGN,
+        IR_ADD,
+        IR_SUB,
+        IR_MUL,
+        IR_DIV,
+        IR_GET_ADDR,
+        IR_READ_ADDR,
+        IR_WRITE_ADDR,
+        IR_GOTO,
+        IR_IF_GOTO,
+        IR_RETURN,
+        IR_DEC,
+        IR_ARG,
+        IR_CALL,
+        IR_PARAM,
+        IR_READ,
+        IR_WRITE,
+    } kind;
+
+    union {
+        struct {
+            pOperand op;
+        } oneOp;
+        struct {
+            pOperand right, left;
+        } assign;
+        struct {
+            pOperand result, op1, op2;
+        } binOp;
+        struct {
+            pOperand x, relop, y, z;
+        } ifGoto;
+        struct {
+            pOperand op;
+            int size;
+        } dec;
+    } u;
+} InterCode;
+```
+
+数据结构中包括了节点的类型和此节点用到的操作符。
+
+### 中间代码生成过程
+
+中间代码生成的过程主要是通过分析语法树递归生成。中间代码生成函数如下：
+
+```c
+// 生成中间代码核心代码
+void genInterCodes(Node root){
+    if (root == NULL){
+        return;
+    } else if (!strcmp(root->name, "ExtDefList")){
+        _translateExtDefList(root);
+    } else {
+        for (int i = 0; i < root->num_child; i++){
+            genInterCodes(root->child[i]);
+        }
+    }
+}
+```
+
+可以看到，函数对根节点调用 `_translateExtDefList` 函数进行分析，而在此函数中，又可以调用其他的非终结符节点进行分析。同时 `genInterCodes` 还依次递归调用其子节点，来覆盖所有非终结符节点。
 
 ### 编译过程说明
-*实验 3 建议大家在 Linux 环境下进行编译（Makefile 可以自动识别环境），如果选择在 MacOS 下进行编译，在变量输出的时候可能会出现无法显示的问题。*
+
+*~~实验 3 建议大家在 Linux 环境下进行编译（Makefile 可以自动识别环境），如果选择在 MacOS 下进行编译，在变量输出的时候可能会出现无法显示的问题。~~ 后来发现 Linux 下也存在问题，我已经将中间变量生成部分的 `sprintf` 函数去除了，解决了这个问题，但问题具体原因仍然不是很清楚。*
+
+在实验 3 中，`makefile` 文件对 Linux 和 MacOS 都进行了适配。`makefile` 文件会自动识别系统并进行编译。如果你使用的是 MacOS 或者 Linux，可以通过执行命令：
+
+```
+make
+```
+
+进行编译，生成的 `parser` 为编译器的可执行文件。当然，你也可以通过执行以下指令单步进行编译，并查看编译结果：
+
+```
+bison -d syntax.y
+flex lex.l
+gcc -Wall lex.yy.c tree.c syntax.tab.c semantic.c inter.c main.c -o parser -ll -ly
+```
+
+这里要注意的是，如果你使用的是 Linux 系统，需要将链接的库从 `-ll` 更改为 `-lfl`。
 
 ## 一些踩雷的点
 在写这个实验的时候我有很长时间没碰过 c 语言了，所以非常不熟悉。在这里写一些过程中踩到的雷，大佬请忽略。
