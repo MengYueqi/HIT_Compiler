@@ -335,33 +335,6 @@ static inline void _translateExp(Node root, pOperand place){
                 symbol_node tar = createSymbolNode();
                 tar->name = root->child[0]->ID_NAME;
                 symbol_node item = findRecord(symTableList, tar);
-                // //结构体数组，temp是临时变量，查不到表，需要用处理数组时候记录下的数组名老查表
-                // if (item == NULL) {
-                //     item = searchTableItem(table, interCodeList->lastArrayName);
-                // }
-
-                // pFieldList tmp;
-                // // 结构体数组 eg: a[5].b
-                // if (item->field->type->kind == ARRAY) {
-                //     tmp = item->field->type->u.array.elem->u.structure.field;
-                // }
-                // // 一般结构体
-                // else {
-                //     tmp = item->field->type->u.structure.field;
-                // }
-                // // 遍历获得offset
-                // while (tmp) {
-                //     if (!strcmp(tmp->name, id->u.name)) break;
-                //     offset += getSize(tmp->type);
-                //     tmp = tmp->tail;
-                // }
-                // pOperand tOffset = newOperand(OP_CONSTANT, offset);
-                // if (place) {
-                //     genInterCode(IR_ADD, place, target, tOffset);
-                //     // 为了处理结构体里的数组把id名通过place回传给上层
-                //     setOperand(place, OP_ADDRESS, (void*)newString(id->u.name));
-                //     // place->isAddr = TRUE;
-                // }
             }
         }
     }
