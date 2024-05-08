@@ -59,6 +59,7 @@ static inline void _translateFunDec(Node root){
             genInterCode(IR_PARAM, newOperand(OP_VARIABLE, _newString(temp->child[1]->ID_NAME)));
             temp = temp->child[2];
         }
+        genInterCode(IR_PARAM, newOperand(OP_VARIABLE, _newString(temp->child[0]->child[1]->child[0]->ID_NAME)));
     }
 }
 
@@ -388,7 +389,11 @@ static inline void _translateExp(Node root, pOperand place){
                 // _translateExp(root->child[2]->child[0], temp->op);
                 // _addArg(argList, temp);
                 // TODO: 这里要看一下怎么回事
-                genInterCode(IR_WRITE, newOperand(OP_CONSTANT, root->child[2]->child[0]->INT_NUM));
+                if (!strcmp(root->child[2]->child[0]->child[0]->name, "INT")){
+                    genInterCode(IR_WRITE, newOperand(OP_CONSTANT, root->child[2]->child[0]->child[0]->INT_NUM));
+                } else if (!strcmp(root->child[2]->child[0]->child[0]->name, "ID")){
+                    genInterCode(IR_WRITE, newOperand(OP_VARIABLE, _newString(root->child[2]->child[0]->child[0]->ID_NAME)));
+                }
             } else {
                 pArg argTemp = argList->head;
                 while (argTemp) {
