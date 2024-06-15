@@ -184,6 +184,11 @@ gcc -Wall lex.yy.c tree.c syntax.tab.c semantic.c main.c -o parser -ll
 你也可以逐步进行编译，并查看编译的结果。
 
 ## 实验3: 中间代码生成
+
+> [!CAUTION]
+>
+> 本实验代码并不能在所有 Linux 环境下正常编译使用。目前测试了 Ubuntu 环境运行正常。但在 CentOS 环境下无法正常编译。之后我会再进行完善。
+
 实验 3 的内容为完成一个中间代码生成器。由于课上讲的内容和实验需要完成的内容有较大差别，实验 3 的中间代码生成器为 [NJU 学长](https://github.com/Tyler-ytr/Compiler)的像素级复刻（在这里感谢 NJU Tyler-ytr 学长），仅供大家参考。
 
 大家完成中间代码后，如果需要测试的话，可以使用哈工大学长的[这个项目](https://github.com/ErnestThePoet/ir-virtual-machine?tab=readme-ov-file)。在线上即可完成中间代码的测试，非常方便。
@@ -298,10 +303,10 @@ make
 ```
 bison -d syntax.y
 flex lex.l
-gcc -Wall lex.yy.c tree.c syntax.tab.c semantic.c inter.c main.c -o parser -ll -ly
+gcc -Wall -O2 lex.yy.c tree.c syntax.tab.c semantic.c inter.c main.c -o parser -ll -ly
 ```
 
-这里要注意的是，如果你使用的是 Linux 系统，需要将链接的库从 `-ll` 更改为 `-lfl`。
+这里要注意的是，如果你使用的是 Linux 系统，需要将链接的库从 `-ll` 更改为 `-lfl`。这里在编译的时候添加了一个 `-O2` 的优化选项。这是因为在一些配置较低的 Linux 环境下，可能出现由于内存不足导致的段错误的现象。这里使用编译优化降低运行需要的内存，以实现在配置较低的服务器上运行。
 
 ## 一些踩雷的点
 在写这个实验的时候我有很长时间没碰过 c 语言了，所以非常不熟悉。在这里写一些过程中踩到的雷，大佬请忽略。
