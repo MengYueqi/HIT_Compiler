@@ -10,7 +10,7 @@ FLEX = flex
 BISON = bison
 
 # 编译器标志
-CFLAGS = -Wall
+CFLAGS = -Wall -O2
 
 # 目标可执行文件
 TARGET = parser
