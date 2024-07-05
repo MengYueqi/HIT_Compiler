@@ -189,7 +189,7 @@ gcc -Wall lex.yy.c tree.c syntax.tab.c semantic.c main.c -o parser -ll
 >
 > 本实验代码并不能在所有 Linux 环境下正常编译使用。目前测试了 Ubuntu 环境运行正常。但在 CentOS 环境下无法正常编译。之后我会再进行完善。
 
-实验 3 的内容为完成一个中间代码生成器。由于课上讲的内容和实验需要完成的内容有较大差别，实验 3 的中间代码生成器为 [NJU 学长](https://github.com/Tyler-ytr/Compiler)的像素级复刻（在这里感谢 NJU Tyler-ytr 学长），仅供大家参考。
+实验 3 的内容为完成一个中间代码生成器。由于课上讲的内容和实验需要完成的内容有较大差别，实验 3 的中间代码生成器为[NJU 学长](https://github.com/Tyler-ytr/Compiler)的像素级复刻（在这里感谢 NJU Tyler-ytr 学长），仅供大家参考。
 
 大家完成中间代码后，如果需要测试的话，可以使用哈工大学长的[这个项目](https://github.com/ErnestThePoet/ir-virtual-machine?tab=readme-ov-file)。在线上即可完成中间代码的测试，非常方便。
 
