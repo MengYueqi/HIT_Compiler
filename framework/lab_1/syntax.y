@@ -100,7 +100,7 @@ Exp : Exp ASSIGNOP Exp {}
     | MINUS Exp {}
     | NOT Exp {}
     | ID LP Args RP {}
-    | ID LP RP {Node child[3] = {$1, $2, $3}; $$ = newNode("Exp", 3, yylineno, child);}
+    | ID LP RP {}
     | Exp LB Exp RB {}
     | Exp DOT ID {}
     | ID {}
