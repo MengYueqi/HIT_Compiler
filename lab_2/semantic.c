@@ -9,7 +9,7 @@
 symbol_node head = NULL;
 
 // 创建变量表
-static symbol_node createSymbolNode(){
+static inline symbol_node createSymbolNode(){
     symbol_node pointer = (symbol_node)malloc(sizeof(struct _SymbolNode));
     pointer->name = (char*)malloc(sizeof(35 * sizeof(char)));
     pointer->symbolType = NULL;
@@ -18,12 +18,12 @@ static symbol_node createSymbolNode(){
 }
 
 // 初始化变量表
-static void _initSymbolList(){
+static inline void _initSymbolList(){
     head = createSymbolNode();
 }
 
 // 打印变量表
-static void _printSymbolList(symbol_node head){
+static inline void _printSymbolList(symbol_node head){
     head = head->next;
     while (head){
         printf("Symbol: %s\n", head->name);
@@ -32,7 +32,7 @@ static void _printSymbolList(symbol_node head){
 }
 
 // 检查变量表中是否有相关数据，有则返回对应指针，没有返回 NULL
-static symbol_node _findRecord(symbol_node head, symbol_node node){
+static inline symbol_node _findRecord(symbol_node head, symbol_node node){
     symbol_node p = head->next;
     while (p){
         if (!strcmp(p->name, node->name)){
@@ -44,14 +44,14 @@ static symbol_node _findRecord(symbol_node head, symbol_node node){
 }
 
 // 向符号表中添加记录
-static void _addRecord(symbol_node sym_record){
+static inline void _addRecord(symbol_node sym_record){
     // 头插法添加
     sym_record->next = head->next;
     head->next = sym_record;
 }
 
 // 对 ExtDef 的分析
-static void _ExtDef(Node root){
+static inline void _ExtDef(Node root){
     // 对全局定义的符号的分析
     type t = _Specifier(root->child[0]);
     // 如果是结构体类型，特别对待一下
@@ -71,47 +71,16 @@ static void _ExtDef(Node root){
     } else if (!strcmp(root->child[1]->name, "FunDec")){
         _FuncDec(root->child[1], t);
         type return_type = _Specifier(root->child[0]);
-        // 判断是空函数，然后提前避免一下
-        // TODO: 这里主要是返回值的识别问题，之后我会再写一下
-        if (root->child[2]->child[2]->num_child != 2){
-            // if (return_type){
-            //     fault = 1;
-            //     printf("Error type 8 at Line %d: The function's return value does not match its definition.\n", root->child[1]->line);
-            //     return;
-            // }
-        } else {
-            // // TODO: 这里有个问题，会使得函数内定义的局部变量不被识别
-            // // 要是改不了这个功能暂时不用了
-            // // 这里删去的对函数返回值和定义不 match 的判断
-
-            // type real_return_type = _CompSt(root->child[2]);
-            // // 获取所有局部变量
-            // // TODO: 之后对变量是否定义时，函数内部要加上参数列表和局部变量列表
-            // // _printSymbolList(_DefList(root->child[2]->child[1]));
-            // // 这里有一个空函数引发的奇怪 bug 注意一下
-            // if (!real_return_type){
-            //     // 这个地方可能会查出来 NULL，所以一定要看一下是否为空指针，不然很麻烦
-            //     return;
-            // } else if (return_type->kind == BASIC){
-            //     if (real_return_type->kind != BASIC || real_return_type->data.basic != return_type->data.basic){
-            //         printf("Error type 8 at Line %d: The function's return value does not match its definition.\n", root->child[1]->line);
-            //     }
-            // } else if (return_type->kind != real_return_type->kind){
-            //     // 啊这个地方写的不是很严谨
-            //     // 都是数组可能会被抹过去，有时间会再完善一下
-            //     printf("Error type 8 at Line %d: The function's return value does not match its definition.\n", root->child[1]->line);
-            // }
-        }
     }
 }
 
 // 对 CompSt 的分析
-static type _CompSt(Node root){
+static inline type _CompSt(Node root){
     return _StmtList(root->child[2]);
 }
 
 // 对 StmtList 的分析
-static type _StmtList(Node root){
+static inline type _StmtList(Node root){
     while (1){
         // 获取最后一条语句
         if (root->child[1]->num_child != 2){
@@ -127,14 +96,13 @@ static type _StmtList(Node root){
 }
 
 // 对 FunDec 的分析
-static void _FuncDec(Node root, type return_type){
+static inline void _FuncDec(Node root, type return_type){
     symbol_node temp = createSymbolNode();
     temp->name = root->child[0]->ID_NAME;
     temp->symbolType = _createType(FUNCTION, 2, return_type, NULL);
     if (_findRecord(head, temp)){
         // 这里用的是所有符号的查找，即只要有相同的符号就不能进行命名
         // 也可以允许和非函数的变量同名，这样需要再写一个函数
-        // 不想写了，啊啊啊啊啊
         fault = 1;
         printf("Error type 4 at Line %d: The function name \"%s\" is duplicated.\n", root->child[0]->line, root->child[0]->ID_NAME);
     }
@@ -145,7 +113,7 @@ static void _FuncDec(Node root, type return_type){
 }
 
 // 对 VarList 的分析
-static void _VarList(Node root){
+static inline void _VarList(Node root){
     while(root->num_child != 1){
         _ParamDec(root->child[0]);
         root = root->child[2];
@@ -154,18 +122,18 @@ static void _VarList(Node root){
 }
 
 // 对 ParamDec 的分析
-static void _ParamDec(Node root){
+static inline void _ParamDec(Node root){
     type t = _Specifier(root->child[0]);
     _VarDec(root->child[1], t);
 }
 
 // 对 ExtDecList 进行分析
-static void _ExtDefList(Node root, type var_type){
+static inline void _ExtDefList(Node root, type var_type){
     _VarDec(root->child[0], var_type);
 }
 
 // 创建一个 type
-static type _createType(Kind kind, int num, ...){
+static inline type _createType(Kind kind, int num, ...){
     type t = (type)malloc(sizeof(struct _Type));
     t->kind = kind;
     va_list tlist;
@@ -194,7 +162,7 @@ static type _createType(Kind kind, int num, ...){
 }
 
 // 对 Specifier 的分析
-static type _Specifier(Node root){
+static inline type _Specifier(Node root){
     if (!strcmp(root->child[0]->name, "TYPE")){
         if (!strcmp(root->child[0]->ID_NAME, "int")) {
             return _createType(BASIC, 1, INT);
@@ -208,7 +176,7 @@ static type _Specifier(Node root){
 }
 
 // 对 StructSpecifier 进行分析
-static void _StructSpecifier(Node root){
+static inline void _StructSpecifier(Node root){
     if (!strcmp(root->child[1]->name, "OptTag")){
         symbol_node temp_head = _DefList(root->child[3]);
         if (_hasDuplicateName(temp_head)){
@@ -224,7 +192,7 @@ static void _StructSpecifier(Node root){
 }
 
 // 判断是否有相同的数据
-static int _hasDuplicateName(symbol_node head){
+static inline int _hasDuplicateName(symbol_node head){
     if (head == NULL || head->next == NULL){
         // 如果链表为空或者只有一个节点，则不可能存在重复名称的节点
         return 0;
@@ -250,7 +218,7 @@ static int _hasDuplicateName(symbol_node head){
 
 
 // 对 DefList 的处理
-static symbol_node _DefList(Node root){
+static inline symbol_node _DefList(Node root){
     // 获取 Def
     symbol_node head_pointer = createSymbolNode();
     head_pointer->next = NULL;
@@ -281,7 +249,7 @@ static symbol_node _DefList(Node root){
 }
 
 // 对 OptTag 的处理
-static void _OptTag(Node root, symbol_node var){
+static inline void _OptTag(Node root, symbol_node var){
     if (!strcmp(root->child[0]->name, "ID")){
         symbol_node temp = createSymbolNode();
         temp->name = root->child[0]->ID_NAME;
@@ -301,7 +269,7 @@ static void _OptTag(Node root, symbol_node var){
 }
 
 // 对 Tag 的处理
-static void _Tag(Node root){
+static inline void _Tag(Node root){
     symbol_node temp = createSymbolNode();
     temp->name = root->child[0]->ID_NAME;
     temp->symbolType = _createType(STRUCTURE, 1, NULL);
@@ -310,7 +278,7 @@ static void _Tag(Node root){
 }
 
 // 对 DecList 的分析
-static void _DecList(Node root, type var_type){
+static inline void _DecList(Node root, type var_type){
     _Dec(root->child[0], var_type);
     // 对多个变量的情况展开分析
     if (root->child[1]){
@@ -321,12 +289,12 @@ static void _DecList(Node root, type var_type){
 }
 
 // 对 Dec 的分析
-static void _Dec(Node root, type var_type){
+static inline void _Dec(Node root, type var_type){
     _VarDec(root->child[0], var_type);
 }
 
 // 对 VarDec 的分析
-static void _VarDec(Node root, type var_type){
+static inline void _VarDec(Node root, type var_type){
     // 获取 ID 节点
     Node id = root->child[0];
     while (id->child[0]){
@@ -358,13 +326,13 @@ static void _VarDec(Node root, type var_type){
 
 
 // 对 Def 的分析
-static void _Def(Node root){
+static inline void _Def(Node root){
     type Type = _Specifier(root->child[0]);
     _DecList(root->child[1], Type);
 }
 
 // 对 Exp 的分析
-static type _Exp(Node root){
+static inline type _Exp(Node root){
     // 如果是 ID, INT, FLOAT
     if (!strcmp(root->child[0]->name, "INT")){
         return _createType(BASIC, 1, INT);
@@ -469,7 +437,7 @@ static type _Exp(Node root){
 }
 
 // 对 Args 的分析
-static void _Args(Node root, symbol_node func_symbol){
+static inline void _Args(Node root, symbol_node func_symbol){
     // type type_temp = func_symbol->symbolType;
     // while (type_temp){
     // }
@@ -477,7 +445,7 @@ static void _Args(Node root, symbol_node func_symbol){
 }
 
 // 对 Stmt 的分析
-static void _Stmt(Node root){
+static inline void _Stmt(Node root){
     switch (root->num_child){
     case 2:
         _Exp(root->child[0]);
@@ -505,7 +473,7 @@ void semantic(Node root){
 }
 
 // 语义分析函数
-static void _semantic(Node root){
+static inline void _semantic(Node root){
     if (root == NULL){
         return;
     }
