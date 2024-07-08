@@ -1,0 +1,6 @@
+int main(){
+int i;
+int a[10];
+i = a[1.5];
+return i;
+}

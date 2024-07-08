@@ -80,37 +80,6 @@ static inline void _ExtDef(Node root){
     } else if (!strcmp(root->child[1]->name, "FunDec")){
         _FuncDec(root->child[1], t);
         type return_type = _Specifier(root->child[0]);
-        // 判断是空函数，然后提前避免一下
-        // TODO: 这里主要是返回值的识别问题，之后我会再写一下
-        if (root->child[2]->child[2]->num_child != 2){
-            // if (return_type){
-            //     fault = 1;
-            //     printf("Error type 8 at Line %d: The function's return value does not match its definition.\n", root->child[1]->line);
-            //     return;
-            // }
-        } else {
-            // // TODO: 这里有个问题，会使得函数内定义的局部变量不被识别
-            // // 要是改不了这个功能暂时不用了
-            // // 这里删去的对函数返回值和定义不 match 的判断
-
-            // type real_return_type = _CompSt(root->child[2]);
-            // // 获取所有局部变量
-            // // TODO: 之后对变量是否定义时，函数内部要加上参数列表和局部变量列表
-            // // _printSymbolList(_DefList(root->child[2]->child[1]));
-            // // 这里有一个空函数引发的奇怪 bug 注意一下
-            // if (!real_return_type){
-            //     // 这个地方可能会查出来 NULL，所以一定要看一下是否为空指针，不然很麻烦
-            //     return;
-            // } else if (return_type->kind == BASIC){
-            //     if (real_return_type->kind != BASIC || real_return_type->data.basic != return_type->data.basic){
-            //         printf("Error type 8 at Line %d: The function's return value does not match its definition.\n", root->child[1]->line);
-            //     }
-            // } else if (return_type->kind != real_return_type->kind){
-            //     // 啊这个地方写的不是很严谨
-            //     // 都是数组可能会被抹过去，有时间会再完善一下
-            //     printf("Error type 8 at Line %d: The function's return value does not match its definition.\n", root->child[1]->line);
-            // }
-        }
     }
 }
 
@@ -141,9 +110,6 @@ static inline void _FuncDec(Node root, type return_type){
     temp->name = root->child[0]->ID_NAME;
     temp->symbolType = _createType(FUNCTION, 2, return_type, NULL);
     if (findRecord(head, temp)){
-        // 这里用的是所有符号的查找，即只要有相同的符号就不能进行命名
-        // 也可以允许和非函数的变量同名，这样需要再写一个函数
-        // 不想写了，啊啊啊啊啊
         fault = 1;
         printf("Error type 4 at Line %d: The function name \"%s\" is duplicated.\n", root->child[0]->line, root->child[0]->ID_NAME);
     }
